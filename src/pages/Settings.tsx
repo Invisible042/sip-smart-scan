@@ -1,53 +1,33 @@
 
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { BottomNavigation } from "@/components/BottomNavigation";
+import { ArrowLeft } from "lucide-react";
 import { SettingsItem } from "@/components/SettingsItem";
 
 const Settings = () => {
   const navigate = useNavigate();
 
-  const settingsItems = [
-    { icon: "👤", title: "Account", hasArrow: true },
-    { icon: "🔔", title: "Notifications", hasArrow: true },
-    { icon: "✅", title: "Nutrition Goals", hasArrow: true },
-    { icon: "🎨", title: "App Appearance", hasArrow: true },
-    { icon: "ℹ️", title: "About", hasArrow: true },
-  ];
-
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-cream">
       {/* Header */}
-      <div className="flex items-center justify-center pt-12 pb-8 relative">
+      <div className="flex items-center pt-6 px-6 pb-4">
         <button
-          onClick={() => navigate(-1)}
-          className="absolute left-6 p-2 rounded-full hover:bg-white/50 transition-colors"
+          onClick={() => navigate("/")}
+          className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center mr-4"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-6 pb-24">
-        <div className="space-y-1">
-          {settingsItems.map((item, index) => (
-            <SettingsItem
-              key={index}
-              icon={item.icon}
-              title={item.title}
-              hasArrow={item.hasArrow}
-            />
-          ))}
-        </div>
-
-        {/* App Name at Bottom */}
-        <div className="mt-32 text-center">
-          <h2 className="text-4xl font-bold text-gray-900">SnapDrink</h2>
-        </div>
+      {/* Settings List */}
+      <div className="px-6 space-y-4">
+        <SettingsItem icon="🔔" title="Notifications" hasArrow />
+        <SettingsItem icon="🎯" title="Daily Goals" hasArrow />
+        <SettingsItem icon="📊" title="Health Preferences" hasArrow />
+        <SettingsItem icon="🔒" title="Privacy" hasArrow />
+        <SettingsItem icon="❓" title="Help & Support" hasArrow />
+        <SettingsItem icon="ℹ️" title="About" hasArrow />
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };
