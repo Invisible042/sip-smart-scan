@@ -24,7 +24,10 @@ const Index = () => {
           <History className="w-5 h-5 text-gray-700" />
         </button>
         
-        <DrinkLogo />
+        <div className="flex flex-col items-center">
+          <DrinkLogo />
+          <DailyCalorieStrip />
+        </div>
         
         <button
           onClick={() => navigate("/settings")}
@@ -39,13 +42,10 @@ const Index = () => {
         {currentDrink ? (
           <NutritionDisplay drink={currentDrink} />
         ) : (
-          <>
-            <CameraCapture 
-              isScanning={isScanning} 
-              setIsScanning={setIsScanning} 
-            />
-            <DailyCalorieStrip />
-          </>
+          <CameraCapture 
+            isScanning={isScanning} 
+            setIsScanning={setIsScanning} 
+          />
         )}
       </div>
     </div>

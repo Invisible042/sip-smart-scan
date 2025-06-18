@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { LocalDatabase, StoredDrink } from '@/services/localDatabase';
 
 export interface DrinkData {
   id: string;
@@ -66,41 +67,72 @@ export const DrinkProvider = ({ children }: { children: ReactNode }) => {
     }
   ]);
 
-  const addDrink = (drink: DrinkData) => {
+  // Load data from local database on mount
+  useEffect(() => {
+    const storedDrinks = LocalDatabase.getAllDrinks();
+    const convertedDrinks = storedDrinks.map((stored: StoredDrink): DrinkData => ({
+      ...stored,
+      timestamp: new Date(stored.timestamp)
+    }));
+    setScannedDrinks(convertedDrinks);
+
+    const storedGoals = LocalDatabase.getGoals();
+    if (storedGoals.length > 0) {
+      setDailyGoals(storedGoals);
+    }
+  }, []);
+
+  const addDrink = async (drink: DrinkData) => {
+    console.log('🥤 Adding drink to context:', drink.name);
+    
+    // Save to local database
+    await LocalDatabase.saveDrink(drink);
+    
+    // Update state
     setScannedDrinks(prev => [drink, ...prev]);
     setCurrentDrink(drink);
     updateGoalProgress();
+    
+    console.log('✅ Drink added successfully');
   };
 
   const getTodayCalories = () => {
-    const today = new Date().toDateString();
-    return scannedDrinks
-      .filter(drink => drink.timestamp.toDateString() === today)
-      .reduce((total, drink) => total + drink.calories, 0);
+    return LocalDatabase.getTodayCalories();
   };
 
   const getTodayDrinks = () => {
-    const today = new Date().toDateString();
-    return scannedDrinks.filter(drink => drink.timestamp.toDateString() === today);
+    const today = new Date();
+    const todayStored = LocalDatabase.getDrinksForDate(today);
+    return todayStored.map((stored: StoredDrink): DrinkData => ({
+      ...stored,
+      timestamp: new Date(stored.timestamp)
+    }));
   };
 
   const updateGoalProgress = () => {
     const todayDrinks = getTodayDrinks();
     const todayCalories = todayDrinks.reduce((total, drink) => total + drink.calories, 0);
     const todaySugar = todayDrinks.reduce((total, drink) => total + drink.sugar, 0);
+    const todayCaffeine = todayDrinks.reduce((total, drink) => total + (drink.caffeine || 0), 0);
     
-    setDailyGoals(prev => prev.map(goal => ({
+    const updatedGoals = dailyGoals.map(goal => ({
       ...goal,
       current: goal.type === 'calories' ? todayCalories : 
                goal.type === 'sugar' ? todaySugar :
+               goal.type === 'caffeine' ? todayCaffeine :
                goal.type === 'drinks' ? todayDrinks.length : goal.current
-    })));
+    }));
+    
+    setDailyGoals(updatedGoals);
+    LocalDatabase.saveGoals(updatedGoals);
   };
 
   const updateDailyGoal = (goalId: string, target: number) => {
-    setDailyGoals(prev => prev.map(goal => 
+    const updatedGoals = dailyGoals.map(goal => 
       goal.id === goalId ? { ...goal, target } : goal
-    ));
+    );
+    setDailyGoals(updatedGoals);
+    LocalDatabase.saveGoals(updatedGoals);
   };
 
   const addDailyGoal = (newGoal: Omit<DailyGoal, 'id' | 'current'>) => {
@@ -109,7 +141,9 @@ export const DrinkProvider = ({ children }: { children: ReactNode }) => {
       id: Date.now().toString(),
       current: 0
     };
-    setDailyGoals(prev => [...prev, goal]);
+    const updatedGoals = [...dailyGoals, goal];
+    setDailyGoals(updatedGoals);
+    LocalDatabase.saveGoals(updatedGoals);
   };
 
   useEffect(() => {
