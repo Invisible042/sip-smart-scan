@@ -5,6 +5,7 @@ import { Settings, History } from "lucide-react";
 import { DrinkLogo } from "@/components/DrinkLogo";
 import { CameraCapture } from "@/components/CameraCapture";
 import { NutritionDisplay } from "@/components/NutritionDisplay";
+import { DailyCalorieStrip } from "@/components/DailyCalorieStrip";
 import { useDrink } from "@/contexts/DrinkContext";
 
 const Index = () => {
@@ -38,10 +39,13 @@ const Index = () => {
         {currentDrink ? (
           <NutritionDisplay drink={currentDrink} />
         ) : (
-          <CameraCapture 
-            isScanning={isScanning} 
-            setIsScanning={setIsScanning} 
-          />
+          <>
+            <CameraCapture 
+              isScanning={isScanning} 
+              setIsScanning={setIsScanning} 
+            />
+            <DailyCalorieStrip />
+          </>
         )}
       </div>
     </div>

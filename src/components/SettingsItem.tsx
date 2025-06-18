@@ -7,7 +7,7 @@ interface SettingsItemProps {
 
 export const SettingsItem = ({ icon, title, hasArrow = false }: SettingsItemProps) => {
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between">
+    <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors">
       <div className="flex items-center space-x-4">
         <div className="w-8 h-8 flex items-center justify-center">
           <span className="text-xl">{icon}</span>

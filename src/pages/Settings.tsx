@@ -6,6 +6,28 @@ import { SettingsItem } from "@/components/SettingsItem";
 const Settings = () => {
   const navigate = useNavigate();
 
+  const handleSettingsClick = (setting: string) => {
+    switch (setting) {
+      case "Notifications":
+        navigate("/notifications");
+        break;
+      case "Daily Goals":
+        navigate("/daily-goals");
+        break;
+      case "Health Preferences":
+        navigate("/health-preferences");
+        break;
+      case "Privacy":
+        navigate("/privacy");
+        break;
+      case "About":
+        navigate("/about");
+        break;
+      default:
+        console.log(`${setting} clicked`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
@@ -21,12 +43,21 @@ const Settings = () => {
 
       {/* Settings List */}
       <div className="px-6 space-y-4">
-        <SettingsItem icon="🔔" title="Notifications" hasArrow />
-        <SettingsItem icon="🎯" title="Daily Goals" hasArrow />
-        <SettingsItem icon="📊" title="Health Preferences" hasArrow />
-        <SettingsItem icon="🔒" title="Privacy" hasArrow />
-        <SettingsItem icon="❓" title="Help & Support" hasArrow />
-        <SettingsItem icon="ℹ️" title="About" hasArrow />
+        <div onClick={() => handleSettingsClick("Notifications")}>
+          <SettingsItem icon="🔔" title="Notifications" hasArrow />
+        </div>
+        <div onClick={() => handleSettingsClick("Daily Goals")}>
+          <SettingsItem icon="🎯" title="Daily Goals" hasArrow />
+        </div>
+        <div onClick={() => handleSettingsClick("Health Preferences")}>
+          <SettingsItem icon="📊" title="Health Preferences" hasArrow />
+        </div>
+        <div onClick={() => handleSettingsClick("Privacy")}>
+          <SettingsItem icon="🔒" title="Privacy" hasArrow />
+        </div>
+        <div onClick={() => handleSettingsClick("About")}>
+          <SettingsItem icon="ℹ️" title="About" hasArrow />
+        </div>
       </div>
     </div>
   );
