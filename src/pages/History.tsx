@@ -1,62 +1,44 @@
 
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useDrink } from "@/contexts/DrinkContext";
+import { ArrowLeft } from "lucide-react";
 import { DrinkHistoryItem } from "@/components/DrinkHistoryItem";
-import { BottomNavigation } from "@/components/BottomNavigation";
+import { useDrink } from "@/contexts/DrinkContext";
 
 const History = () => {
   const navigate = useNavigate();
   const { scannedDrinks } = useDrink();
 
-  const formatDate = (date: Date) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return "Today";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
-    } else {
-      return date.toLocaleDateString();
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-cream">
       {/* Header */}
-      <div className="flex items-center justify-center pt-12 pb-8 relative">
+      <div className="flex items-center pt-6 px-6 pb-4">
         <button
-          onClick={() => navigate(-1)}
-          className="absolute left-6 p-2 rounded-full hover:bg-white/50 transition-colors"
+          onClick={() => navigate("/")}
+          className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center mr-4"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">History</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Drink History</h1>
       </div>
 
       {/* Content */}
-      <div className="flex-1 px-6 pb-24">
+      <div className="px-6 pb-6">
         {scannedDrinks.length === 0 ? (
-          <div className="text-center pt-20">
-            <p className="text-gray-500 text-lg">No drinks scanned yet</p>
-            <p className="text-gray-400 mt-2">Start scanning to see your history</p>
+          <div className="text-center py-16">
+            <div className="w-20 h-20 mx-auto mb-4 bg-gray-300 rounded-full flex items-center justify-center">
+              <div className="text-3xl">📋</div>
+            </div>
+            <p className="text-gray-600 text-lg">No drinks scanned yet</p>
+            <p className="text-gray-500 mt-2">Start by scanning your first drink!</p>
           </div>
         ) : (
           <div className="space-y-4">
             {scannedDrinks.map((drink) => (
-              <DrinkHistoryItem
-                key={drink.id}
-                drink={drink}
-                date={formatDate(drink.timestamp)}
-              />
+              <DrinkHistoryItem key={drink.id} drink={drink} />
             ))}
           </div>
         )}
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };
