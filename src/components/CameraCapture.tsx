@@ -33,6 +33,7 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
   };
 
   const handleCameraClick = () => {
+    // For now, trigger file input - can be enhanced with camera API later
     fileInputRef.current?.click();
   };
 
@@ -41,25 +42,25 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Camera Preview Area - Takes most of the available space */}
-      <div className="flex-1 mb-8 min-h-[60vh]">
-        <div className="h-full bg-gray-soft rounded-3xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+    <div className="flex flex-col items-center">
+      {/* Camera Preview Area */}
+      <div className="w-full max-w-sm mx-auto mb-8">
+        <div className="aspect-square bg-gray-soft rounded-3xl border-2 border-dashed border-gray-300 flex items-center justify-center">
           {isScanning ? (
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-6 animate-pulse-subtle">
+              <div className="w-16 h-16 mx-auto mb-4 animate-pulse-subtle">
                 <div className="w-full h-full bg-orange-brand rounded-full flex items-center justify-center">
-                  <div className="text-white text-3xl">🔍</div>
+                  <div className="text-white text-2xl">🔍</div>
                 </div>
               </div>
-              <p className="text-gray-600 font-medium text-lg">Analyzing drink...</p>
+              <p className="text-gray-600 font-medium">Analyzing drink...</p>
             </div>
           ) : (
             <div className="text-center p-8">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-300 rounded-full flex items-center justify-center">
-                <Camera className="w-12 h-12 text-gray-500" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gray-300 rounded-full flex items-center justify-center">
+                <Camera className="w-10 h-10 text-gray-500" />
               </div>
-              <p className="text-gray-600 text-xl font-medium leading-relaxed max-w-sm">
+              <p className="text-gray-600 text-lg font-medium leading-relaxed">
                 Snap or upload a drink label to instantly see calories, sugar, and more.
               </p>
             </div>
@@ -67,12 +68,12 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
         </div>
       </div>
 
-      {/* Action Buttons - Fixed at bottom */}
-      <div className="flex items-center justify-center space-x-12">
+      {/* Action Buttons */}
+      <div className="flex items-center space-x-8">
         <button
           onClick={handleUploadClick}
           disabled={isScanning}
-          className="flex flex-col items-center space-y-3 disabled:opacity-50"
+          className="flex flex-col items-center space-y-2 disabled:opacity-50"
         >
           <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center">
             <Upload className="w-8 h-8 text-white" />
@@ -83,20 +84,17 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
         <button
           onClick={handleCameraClick}
           disabled={isScanning}
-          className="w-20 h-20 border-4 border-gray-900 rounded-full disabled:opacity-50 flex items-center justify-center"
-        >
-          <div className="w-16 h-16 bg-gray-900 rounded-full"></div>
-        </button>
+          className="w-20 h-20 border-4 border-gray-900 rounded-full disabled:opacity-50"
+        />
 
         <button
           onClick={handleCameraClick}
           disabled={isScanning}
-          className="flex flex-col items-center space-y-3 disabled:opacity-50"
+          className="flex flex-col items-center space-y-2 disabled:opacity-50"
         >
           <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center">
             <Camera className="w-8 h-8 text-white" />
           </div>
-          <span className="text-gray-700 font-medium">Camera</span>
         </button>
       </div>
 
