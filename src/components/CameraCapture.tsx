@@ -43,7 +43,7 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
   return (
     <div className="flex flex-col h-full">
       {/* Camera Preview Area - Takes most of the available space */}
-      <div className="flex-1 mb-8 min-h-[60vh]">
+      <div className="flex-1 mb-6 min-h-[65vh]">
         <div className="h-full bg-gray-soft rounded-3xl border-2 border-dashed border-gray-300 flex items-center justify-center">
           {isScanning ? (
             <div className="text-center">
@@ -67,17 +67,17 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
         </div>
       </div>
 
-      {/* Action Buttons - Fixed at bottom */}
-      <div className="flex items-center justify-center space-x-12">
+      {/* Action Buttons - Fixed at bottom with labels */}
+      <div className="flex items-center justify-center space-x-12 pb-4">
         <button
           onClick={handleUploadClick}
           disabled={isScanning}
-          className="flex flex-col items-center space-y-3 disabled:opacity-50"
+          className="flex flex-col items-center space-y-2 disabled:opacity-50"
         >
           <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center">
             <Upload className="w-8 h-8 text-white" />
           </div>
-          <span className="text-gray-700 font-medium">Upload</span>
+          <span className="text-gray-700 font-medium text-sm">Upload</span>
         </button>
 
         <button
@@ -91,12 +91,12 @@ export const CameraCapture = ({ isScanning, setIsScanning }: CameraCaptureProps)
         <button
           onClick={handleCameraClick}
           disabled={isScanning}
-          className="flex flex-col items-center space-y-3 disabled:opacity-50"
+          className="flex flex-col items-center space-y-2 disabled:opacity-50"
         >
           <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center">
             <Camera className="w-8 h-8 text-white" />
           </div>
-          <span className="text-gray-700 font-medium">Camera</span>
+          <span className="text-gray-700 font-medium text-sm">Camera</span>
         </button>
       </div>
 

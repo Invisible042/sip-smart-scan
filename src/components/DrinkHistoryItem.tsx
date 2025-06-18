@@ -3,7 +3,7 @@ import { DrinkData } from "@/contexts/DrinkContext";
 
 interface DrinkHistoryItemProps {
   drink: DrinkData;
-  date: string;
+  date?: string;
 }
 
 export const DrinkHistoryItem = ({ drink, date }: DrinkHistoryItemProps) => {
@@ -24,7 +24,7 @@ export const DrinkHistoryItem = ({ drink, date }: DrinkHistoryItemProps) => {
       <div className="flex-1">
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-gray-900">{drink.name}</h3>
-          <span className="text-gray-500 text-sm">{date}</span>
+          {date && <span className="text-gray-500 text-sm">{date}</span>}
         </div>
         <div className="flex space-x-4 text-sm text-gray-600">
           <span>{drink.calories} kcal</span>
