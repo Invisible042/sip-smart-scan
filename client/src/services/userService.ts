@@ -267,7 +267,7 @@ export class UserService {
         return await response.json();
       }
     } catch (error) {
-      console.warn('Backend not available for today drinks');
+      // Silent fallback - no console warnings
     }
     
     // Fallback to localStorage with date filtering

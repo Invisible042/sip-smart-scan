@@ -30,21 +30,26 @@ const Index = () => {
     try {
       const { UserService } = await import("@/services/userService");
       const todayData = await UserService.getTodayDrinks();
-      setTodayStats({
-        calories: todayData.totals.calories,
-        sugar: todayData.totals.sugar_g,
-        caffeine: todayData.totals.caffeine_mg,
-        drinkCount: todayData.totals.drink_count
-      });
+      if (todayData && todayData.totals) {
+        setTodayStats({
+          calories: todayData.totals.calories || 0,
+          sugar: todayData.totals.sugar_g || 0,
+          caffeine: todayData.totals.caffeine_mg || 0,
+          drinkCount: todayData.totals.drink_count || 0
+        });
+        return;
+      }
     } catch (error) {
-      // Fallback to local database
-      setTodayStats({
-        calories: LocalDatabase.getTodayCalories(),
-        sugar: LocalDatabase.getTodaySugar(),
-        caffeine: LocalDatabase.getTodayCaffeine(),
-        drinkCount: todayDrinks.length
-      });
+      console.log('Using local data - backend connection failed');
     }
+    
+    // Always fallback to local database
+    setTodayStats({
+      calories: LocalDatabase.getTodayCalories(),
+      sugar: LocalDatabase.getTodaySugar(),
+      caffeine: LocalDatabase.getTodayCaffeine(),
+      drinkCount: todayDrinks.length
+    });
   };
 
   const formatTime = (date: Date) => {

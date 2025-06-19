@@ -2,14 +2,14 @@
   "default": {
     "user_id": "default",
     "notifications": {
-      "daily_reminders": false,
+      "daily_reminders": true,
       "goal_achievements": true,
       "health_tips": false,
       "weekly_reports": true,
       "reminder_time": "09:00"
     },
     "health_preferences": {
-      "age": null,
+      "age": 25,
       "weight": null,
       "height": null,
       "activity_level": "moderate",
@@ -29,7 +29,7 @@
         "id": "30272029-33a6-49c9-94e3-8c8469e1295f",
         "name": "Daily Calories",
         "target": 2000.0,
-        "current": 4.0,
+        "current": 6.0,
         "unit": "kcal",
         "type": "calories",
         "created_at": "2025-06-19 14:33:32.505506",
@@ -39,7 +39,7 @@
         "id": "8997392a-cdc9-4879-be96-27c2fd3277ab",
         "name": "Daily Water",
         "target": 2000.0,
-        "current": 480.0,
+        "current": 720.0,
         "unit": "ml",
         "type": "water",
         "created_at": "2025-06-19 14:33:32.505506",
@@ -57,6 +57,6 @@
       }
     ],
     "created_at": "2025-06-19 14:33:32.505506",
-    "updated_at": "2025-06-19 14:41:49.696140"
+    "updated_at": "2025-06-19 14:46:35.136262"
   }
 }

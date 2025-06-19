@@ -27,6 +27,20 @@
       "health_tip": "This is a nutritious option that supports your daily fluid and nutrient needs.",
       "timestamp": "2025-06-19T14:41:49.696836",
       "date": "2025-06-19"
+    },
+    {
+      "id": "default_3_1750344395",
+      "name": "Tea",
+      "calories": 2.0,
+      "sugar_g": 0.0,
+      "caffeine_mg": 47.0,
+      "water_ml": 240.0,
+      "sodium_mg": 7.0,
+      "carbs_g": 0.7,
+      "protein_g": 0.0,
+      "health_tip": "This is a nutritious option that supports your daily fluid and nutrient needs.",
+      "timestamp": "2025-06-19T14:46:35.105112",
+      "date": "2025-06-19"
     }
   ]
 }
