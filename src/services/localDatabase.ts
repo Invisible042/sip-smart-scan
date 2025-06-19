@@ -13,8 +13,7 @@ export interface UserPreferences {
   theme: 'light' | 'dark';
 }
 
-export interface StoredDrink extends DrinkData {
-  id: string;
+export interface StoredDrink extends Omit<DrinkData, 'timestamp'> {
   timestamp: string; // Store as ISO string for localStorage
 }
 
@@ -48,6 +47,18 @@ export class LocalDatabase {
     const today = new Date();
     const todayDrinks = this.getDrinksForDate(today);
     return todayDrinks.reduce((total, drink) => total + drink.calories, 0);
+  }
+
+  static getTodaySugar(): number {
+    const today = new Date();
+    const todayDrinks = this.getDrinksForDate(today);
+    return todayDrinks.reduce((total, drink) => total + drink.sugar, 0);
+  }
+
+  static getTodayCaffeine(): number {
+    const today = new Date();
+    const todayDrinks = this.getDrinksForDate(today);
+    return todayDrinks.reduce((total, drink) => total + (drink.caffeine || 0), 0);
   }
 
   // Goals operations
