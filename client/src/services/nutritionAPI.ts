@@ -1,7 +1,10 @@
 
 import { DrinkData } from "@/contexts/DrinkContext";
 
-// Enhanced nutrition database with more detailed health insights
+// DEPRECATED: This file is replaced by the Python FastAPI backend
+// All nutrition analysis is now handled by the backend at /upload endpoint
+
+// Legacy nutrition database kept for reference only
 const nutritionDatabase: Record<string, Omit<DrinkData, 'id' | 'timestamp' | 'image'>> = {
   'coca-cola': {
     name: 'Coca-Cola Classic',

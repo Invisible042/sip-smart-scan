@@ -1,37 +1,63 @@
 
 import { DrinkData } from "@/contexts/DrinkContext";
-import { NutritionAPI } from "./nutritionAPI";
 import { LocalDatabase } from "./localDatabase";
 
+const API_BASE_URL = 'http://localhost:8000';
+
+interface BackendResponse {
+  drink_name: string;
+  nutrition: {
+    calories: number;
+    sugar_g: number;
+    caffeine_mg: number;
+    water_ml: number;
+    sodium_mg?: number;
+    carbs_g?: number;
+    protein_g?: number;
+  };
+  health_tip: string;
+  confidence_score: number;
+}
+
 export const analyzeDrink = async (imageFile: File): Promise<DrinkData> => {
-  console.log('🔍 Starting drink analysis process...');
+  console.log('Starting drink analysis with backend...');
   
   try {
-    // Use the enhanced nutrition API
-    const drinkData = await NutritionAPI.analyzeDrink(imageFile);
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    
+    const response = await fetch(`${API_BASE_URL}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Backend error: ${response.status}`);
+    }
+    
+    const backendData: BackendResponse = await response.json();
+    
+    // Convert backend response to frontend format
+    const drinkData: DrinkData = {
+      id: Date.now().toString(),
+      name: backendData.drink_name,
+      calories: backendData.nutrition.calories,
+      sugar: backendData.nutrition.sugar_g,
+      caffeine: backendData.nutrition.caffeine_mg,
+      water: backendData.nutrition.water_ml,
+      healthTip: backendData.health_tip,
+      timestamp: new Date().toISOString(),
+      imageUrl: URL.createObjectURL(imageFile)
+    };
     
     // Save to local database
     await LocalDatabase.saveDrink(drinkData);
     
-    console.log('✅ Drink analyzed and saved:', drinkData.name);
+    console.log('Drink analyzed and saved:', drinkData.name);
     return drinkData;
     
   } catch (error) {
-    console.error('❌ Drink analysis failed:', error);
+    console.error('Drink analysis failed:', error);
     throw error;
   }
-};
-
-// Legacy functions for backward compatibility
-export const detectDrinkFromImage = async (imageFile: File): Promise<string> => {
-  return await NutritionAPI.detectDrinkFromImage(imageFile);
-};
-
-export const getNutritionData = async (drinkName: string) => {
-  return await NutritionAPI.getNutritionData(drinkName);
-};
-
-// New health insights function
-export const getHealthInsights = (drinks: DrinkData[]): string[] => {
-  return NutritionAPI.getHealthRecommendations(drinks);
 };
