@@ -1,9 +1,10 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { UserService } from "@/services/userService";
 
 const HealthPreferences = () => {
   const navigate = useNavigate();
@@ -11,13 +12,43 @@ const HealthPreferences = () => {
     age: "",
     weight: "",
     height: "",
-    activityLevel: "moderate",
-    dietaryRestrictions: "",
-    healthGoals: ""
+    activity_level: "moderate",
+    dietary_restrictions: "",
+    health_goals: ""
   });
 
-  const handleSave = () => {
-    console.log("Saving preferences:", preferences);
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  const loadPreferences = async () => {
+    try {
+      const prefs = await UserService.getHealthPreferences();
+      setPreferences({
+        age: prefs.age?.toString() || "",
+        weight: prefs.weight?.toString() || "",
+        height: prefs.height?.toString() || "",
+        activity_level: prefs.activity_level || "moderate",
+        dietary_restrictions: prefs.dietary_restrictions || "",
+        health_goals: prefs.health_goals || ""
+      });
+    } catch (error) {
+      console.warn('Using default health preferences');
+    }
+  };
+
+  const handleSave = async () => {
+    const updateData = {
+      age: preferences.age ? parseInt(preferences.age) : undefined,
+      weight: preferences.weight ? parseFloat(preferences.weight) : undefined,
+      height: preferences.height ? parseFloat(preferences.height) : undefined,
+      activity_level: preferences.activity_level,
+      dietary_restrictions: preferences.dietary_restrictions || undefined,
+      health_goals: preferences.health_goals || undefined
+    };
+    
+    await UserService.updateHealthPreferences(updateData);
+    console.log("Health preferences saved successfully");
   };
 
   return (
@@ -90,8 +121,8 @@ const HealthPreferences = () => {
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Dietary Restrictions</label>
               <Input
-                value={preferences.dietaryRestrictions}
-                onChange={(e) => setPreferences(prev => ({ ...prev, dietaryRestrictions: e.target.value }))}
+                value={preferences.dietary_restrictions}
+                onChange={(e) => setPreferences(prev => ({ ...prev, dietary_restrictions: e.target.value }))}
                 placeholder="e.g., Diabetic, Low sugar, etc."
                 className="bg-white/5 border-white/10 text-white placeholder:text-slate-400"
               />

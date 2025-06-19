@@ -1,23 +1,40 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { UserService } from "@/services/userService";
 
 const Privacy = () => {
   const navigate = useNavigate();
   const [privacy, setPrivacy] = useState({
-    dataCollection: true,
-    analyticsTracking: false,
-    personalizedAds: false,
-    shareWithPartners: false
+    data_collection: true,
+    analytics_tracking: false,
+    personalized_ads: false,
+    share_with_partners: false
   });
 
-  const handleToggle = (key: keyof typeof privacy) => {
+  useEffect(() => {
+    loadPrivacySettings();
+  }, []);
+
+  const loadPrivacySettings = async () => {
+    try {
+      const settings = await UserService.getPrivacySettings();
+      setPrivacy(settings);
+    } catch (error) {
+      console.warn('Using default privacy settings');
+    }
+  };
+
+  const handleToggle = async (key: keyof typeof privacy) => {
+    const newValue = !privacy[key];
     setPrivacy(prev => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: newValue
     }));
+    
+    await UserService.updatePrivacySettings({ [key]: newValue });
   };
 
   return (
@@ -54,8 +71,8 @@ const Privacy = () => {
                 <p className="text-sm text-slate-400">Allow app to collect usage data</p>
               </div>
               <Switch
-                checked={privacy.dataCollection}
-                onCheckedChange={() => handleToggle('dataCollection')}
+                checked={privacy.data_collection}
+                onCheckedChange={() => handleToggle('data_collection')}
               />
             </div>
           </div>
@@ -67,8 +84,8 @@ const Privacy = () => {
                 <p className="text-sm text-slate-400">Help improve the app with analytics</p>
               </div>
               <Switch
-                checked={privacy.analyticsTracking}
-                onCheckedChange={() => handleToggle('analyticsTracking')}
+                checked={privacy.analytics_tracking}
+                onCheckedChange={() => handleToggle('analytics_tracking')}
               />
             </div>
           </div>
@@ -80,8 +97,8 @@ const Privacy = () => {
                 <p className="text-sm text-slate-400">Show relevant advertisements</p>
               </div>
               <Switch
-                checked={privacy.personalizedAds}
-                onCheckedChange={() => handleToggle('personalizedAds')}
+                checked={privacy.personalized_ads}
+                onCheckedChange={() => handleToggle('personalized_ads')}
               />
             </div>
           </div>
@@ -93,8 +110,8 @@ const Privacy = () => {
                 <p className="text-sm text-slate-400">Share anonymized data with partners</p>
               </div>
               <Switch
-                checked={privacy.shareWithPartners}
-                onCheckedChange={() => handleToggle('shareWithPartners')}
+                checked={privacy.share_with_partners}
+                onCheckedChange={() => handleToggle('share_with_partners')}
               />
             </div>
           </div>

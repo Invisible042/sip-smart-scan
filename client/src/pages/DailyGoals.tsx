@@ -1,15 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Edit3, Check } from "lucide-react";
 import { useDrink } from "@/contexts/DrinkContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { UserService } from "@/services/userService";
 
 const DailyGoals = () => {
   const navigate = useNavigate();
   const { dailyGoals, updateDailyGoal, addDailyGoal } = useDrink();
+  const [backendGoals, setBackendGoals] = useState<any[]>([]);
   const [editingGoal, setEditingGoal] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>("");
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -20,21 +22,36 @@ const DailyGoals = () => {
     type: "calories" as const
   });
 
+  useEffect(() => {
+    loadBackendGoals();
+  }, []);
+
+  const loadBackendGoals = async () => {
+    try {
+      const goals = await UserService.getDailyGoals();
+      setBackendGoals(goals);
+    } catch (error) {
+      console.warn('Using local goals only');
+    }
+  };
+
   const handleEditGoal = (goalId: string, currentTarget: number) => {
     setEditingGoal(goalId);
     setEditValue(currentTarget.toString());
   };
 
-  const handleSaveGoal = (goalId: string) => {
+  const handleSaveGoal = async (goalId: string) => {
     const target = parseInt(editValue);
     if (!isNaN(target) && target > 0) {
       updateDailyGoal(goalId, target);
+      await UserService.updateDailyGoal(goalId, { target });
+      await loadBackendGoals();
     }
     setEditingGoal(null);
     setEditValue("");
   };
 
-  const handleAddGoal = () => {
+  const handleAddGoal = async () => {
     const target = parseInt(newGoal.target);
     if (newGoal.name && !isNaN(target) && target > 0 && newGoal.unit) {
       addDailyGoal({
@@ -43,6 +60,13 @@ const DailyGoals = () => {
         unit: newGoal.unit,
         type: newGoal.type
       });
+      await UserService.createDailyGoal({
+        name: newGoal.name,
+        target,
+        unit: newGoal.unit,
+        type: newGoal.type
+      });
+      await loadBackendGoals();
       setNewGoal({ name: "", target: "", unit: "", type: "calories" });
       setShowAddDialog(false);
     }

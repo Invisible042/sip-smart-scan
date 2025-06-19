@@ -11,7 +11,12 @@ import base64
 from services.vision_service import VisionService
 from services.nutrition_service import NutritionService
 from services.health_tip_service import HealthTipService
+from services.user_service import UserService
 from models.response_models import DrinkAnalysisResponse
+from models.user_models import (
+    UpdateNotificationSettings, UpdateHealthPreferences, UpdatePrivacySettings,
+    CreateDailyGoal, UpdateDailyGoal
+)
 
 # Load environment variables
 load_dotenv()
@@ -31,6 +36,7 @@ app.add_middleware(
 vision_service = VisionService()
 nutrition_service = NutritionService()
 health_tip_service = HealthTipService()
+user_service = UserService()
 
 @app.get("/")
 async def root():
@@ -66,6 +72,10 @@ async def analyze_drink(file: UploadFile = File(...)):
         # Step 3: Generate health tip
         health_tip = await health_tip_service.generate_health_tip(drink_name, nutrition_data)
         
+        # Step 4: Update daily goals
+        user_id = "default"  # In real app, get from authentication
+        user_service.update_goals_from_drink(user_id, nutrition_data.dict())
+        
         return DrinkAnalysisResponse(
             drink_name=drink_name,
             nutrition=nutrition_data,
@@ -81,8 +91,88 @@ async def health_check():
     return {"status": "healthy", "services": {
         "vision": vision_service.is_available(),
         "nutrition": nutrition_service.is_available(),
-        "health_tips": health_tip_service.is_available()
+        "health_tips": health_tip_service.is_available(),
+        "user_service": user_service is not None
     }}
+
+# User Profile Endpoints
+@app.get("/user/{user_id}/profile")
+async def get_user_profile(user_id: str = "default"):
+    """Get complete user profile"""
+    user = user_service.get_or_create_user(user_id)
+    return user.dict()
+
+@app.get("/user/{user_id}/stats")
+async def get_user_stats(user_id: str = "default"):
+    """Get user statistics and achievements"""
+    return user_service.get_user_stats(user_id)
+
+# Notifications Endpoints
+@app.get("/user/{user_id}/notifications")
+async def get_notifications(user_id: str = "default"):
+    """Get notification settings"""
+    user = user_service.get_or_create_user(user_id)
+    return user.notifications.dict()
+
+@app.put("/user/{user_id}/notifications")
+async def update_notifications(settings: UpdateNotificationSettings, user_id: str = "default"):
+    """Update notification settings"""
+    updated_settings = user_service.update_notifications(user_id, settings)
+    return {"message": "Notification settings updated", "settings": updated_settings.dict()}
+
+# Health Preferences Endpoints
+@app.get("/user/{user_id}/health-preferences")
+async def get_health_preferences(user_id: str = "default"):
+    """Get health preferences"""
+    user = user_service.get_or_create_user(user_id)
+    return user.health_preferences.dict()
+
+@app.put("/user/{user_id}/health-preferences")
+async def update_health_preferences(preferences: UpdateHealthPreferences, user_id: str = "default"):
+    """Update health preferences"""
+    updated_prefs = user_service.update_health_preferences(user_id, preferences)
+    return {"message": "Health preferences updated", "preferences": updated_prefs.dict()}
+
+# Privacy Settings Endpoints
+@app.get("/user/{user_id}/privacy")
+async def get_privacy_settings(user_id: str = "default"):
+    """Get privacy settings"""
+    user = user_service.get_or_create_user(user_id)
+    return user.privacy_settings.dict()
+
+@app.put("/user/{user_id}/privacy")
+async def update_privacy_settings(settings: UpdatePrivacySettings, user_id: str = "default"):
+    """Update privacy settings"""
+    updated_settings = user_service.update_privacy_settings(user_id, settings)
+    return {"message": "Privacy settings updated", "settings": updated_settings.dict()}
+
+# Daily Goals Endpoints
+@app.get("/user/{user_id}/daily-goals")
+async def get_daily_goals(user_id: str = "default"):
+    """Get all daily goals"""
+    goals = user_service.get_daily_goals(user_id)
+    return {"goals": [goal.dict() for goal in goals]}
+
+@app.post("/user/{user_id}/daily-goals")
+async def create_daily_goal(goal_data: CreateDailyGoal, user_id: str = "default"):
+    """Create a new daily goal"""
+    new_goal = user_service.create_daily_goal(user_id, goal_data)
+    return {"message": "Daily goal created", "goal": new_goal.dict()}
+
+@app.put("/user/{user_id}/daily-goals/{goal_id}")
+async def update_daily_goal(goal_id: str, goal_update: UpdateDailyGoal, user_id: str = "default"):
+    """Update an existing daily goal"""
+    try:
+        updated_goal = user_service.update_daily_goal(user_id, goal_id, goal_update)
+        return {"message": "Daily goal updated", "goal": updated_goal.dict()}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/user/{user_id}/achievements")
+async def get_achievements(user_id: str = "default"):
+    """Get user achievements"""
+    achievements = user_service.get_achievements(user_id)
+    return {"achievements": achievements}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

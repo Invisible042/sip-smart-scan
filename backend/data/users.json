@@ -1,0 +1,62 @@
+{
+  "default": {
+    "user_id": "default",
+    "notifications": {
+      "daily_reminders": false,
+      "goal_achievements": true,
+      "health_tips": false,
+      "weekly_reports": true,
+      "reminder_time": "09:00"
+    },
+    "health_preferences": {
+      "age": null,
+      "weight": null,
+      "height": null,
+      "activity_level": "moderate",
+      "dietary_restrictions": null,
+      "health_goals": null,
+      "target_calories": null,
+      "target_water_ml": null
+    },
+    "privacy_settings": {
+      "data_collection": true,
+      "analytics_tracking": false,
+      "personalized_ads": false,
+      "share_with_partners": false
+    },
+    "daily_goals": [
+      {
+        "id": "30272029-33a6-49c9-94e3-8c8469e1295f",
+        "name": "Daily Calories",
+        "target": 2000.0,
+        "current": 0.0,
+        "unit": "kcal",
+        "type": "calories",
+        "created_at": "2025-06-19 14:33:32.505506",
+        "is_achieved": false
+      },
+      {
+        "id": "8997392a-cdc9-4879-be96-27c2fd3277ab",
+        "name": "Daily Water",
+        "target": 2000.0,
+        "current": 0.0,
+        "unit": "ml",
+        "type": "water",
+        "created_at": "2025-06-19 14:33:32.505506",
+        "is_achieved": false
+      },
+      {
+        "id": "8ca35950-3939-4048-b8b8-5b5586bf5e4f",
+        "name": "Sugar Limit",
+        "target": 50.0,
+        "current": 0.0,
+        "unit": "g",
+        "type": "sugar",
+        "created_at": "2025-06-19 14:33:32.505506",
+        "is_achieved": false
+      }
+    ],
+    "created_at": "2025-06-19 14:33:32.505506",
+    "updated_at": "2025-06-19 14:33:32.525329"
+  }
+}

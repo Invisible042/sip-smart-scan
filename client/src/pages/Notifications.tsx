@@ -1,23 +1,40 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { UserService } from "@/services/userService";
 
 const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
-    dailyReminders: true,
-    goalAchievements: true,
-    healthTips: false,
-    weeklyReports: true
+    daily_reminders: true,
+    goal_achievements: true,
+    health_tips: false,
+    weekly_reports: true
   });
 
-  const handleToggle = (key: keyof typeof notifications) => {
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = async () => {
+    try {
+      const settings = await UserService.getNotifications();
+      setNotifications(settings);
+    } catch (error) {
+      console.warn('Using default notification settings');
+    }
+  };
+
+  const handleToggle = async (key: keyof typeof notifications) => {
+    const newValue = !notifications[key];
     setNotifications(prev => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: newValue
     }));
+    
+    await UserService.updateNotifications({ [key]: newValue });
   };
 
   return (
@@ -54,8 +71,8 @@ const Notifications = () => {
                 <p className="text-sm text-slate-400">Get reminded to log your drinks</p>
               </div>
               <Switch
-                checked={notifications.dailyReminders}
-                onCheckedChange={() => handleToggle('dailyReminders')}
+                checked={notifications.daily_reminders}
+                onCheckedChange={() => handleToggle('daily_reminders')}
               />
             </div>
           </div>
@@ -67,8 +84,8 @@ const Notifications = () => {
                 <p className="text-sm text-slate-400">Celebrate when you reach your goals</p>
               </div>
               <Switch
-                checked={notifications.goalAchievements}
-                onCheckedChange={() => handleToggle('goalAchievements')}
+                checked={notifications.goal_achievements}
+                onCheckedChange={() => handleToggle('goal_achievements')}
               />
             </div>
           </div>
@@ -80,8 +97,8 @@ const Notifications = () => {
                 <p className="text-sm text-slate-400">Receive personalized health advice</p>
               </div>
               <Switch
-                checked={notifications.healthTips}
-                onCheckedChange={() => handleToggle('healthTips')}
+                checked={notifications.health_tips}
+                onCheckedChange={() => handleToggle('health_tips')}
               />
             </div>
           </div>
@@ -93,8 +110,8 @@ const Notifications = () => {
                 <p className="text-sm text-slate-400">Get weekly nutrition summaries</p>
               </div>
               <Switch
-                checked={notifications.weeklyReports}
-                onCheckedChange={() => handleToggle('weeklyReports')}
+                checked={notifications.weekly_reports}
+                onCheckedChange={() => handleToggle('weekly_reports')}
               />
             </div>
           </div>
