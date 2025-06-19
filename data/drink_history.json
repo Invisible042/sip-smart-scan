@@ -1,0 +1,18 @@
+{
+  "default": [
+    {
+      "id": "default_1_1750344151",
+      "name": "Apple Juice",
+      "calories": 114.0,
+      "sugar_g": 24.0,
+      "caffeine_mg": 0.0,
+      "water_ml": 240.0,
+      "sodium_mg": 10.0,
+      "carbs_g": 28.0,
+      "protein_g": 0.2,
+      "health_tip": "High sugar content detected. Try diluting with water or choosing sugar-free alternatives.",
+      "timestamp": "2025-06-19T14:42:31.170135",
+      "date": "2025-06-19"
+    }
+  ]
+}

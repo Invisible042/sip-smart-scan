@@ -12,6 +12,7 @@ from services.vision_service import VisionService
 from services.nutrition_service import NutritionService
 from services.health_tip_service import HealthTipService
 from services.user_service import UserService
+from services.drink_history_service import DrinkHistoryService
 from models.response_models import DrinkAnalysisResponse
 from models.user_models import (
     UpdateNotificationSettings, UpdateHealthPreferences, UpdatePrivacySettings,
@@ -37,6 +38,7 @@ vision_service = VisionService()
 nutrition_service = NutritionService()
 health_tip_service = HealthTipService()
 user_service = UserService()
+drink_history_service = DrinkHistoryService()
 
 @app.get("/")
 async def root():
@@ -72,9 +74,10 @@ async def analyze_drink(file: UploadFile = File(...)):
         # Step 3: Generate health tip
         health_tip = await health_tip_service.generate_health_tip(drink_name, nutrition_data)
         
-        # Step 4: Update daily goals
+        # Step 4: Update daily goals and save drink history
         user_id = "default"  # In real app, get from authentication
         user_service.update_goals_from_drink(user_id, nutrition_data.dict())
+        drink_history_service.add_drink(user_id, drink_name, nutrition_data, health_tip)
         
         return DrinkAnalysisResponse(
             drink_name=drink_name,
@@ -173,6 +176,44 @@ async def get_achievements(user_id: str = "default"):
     """Get user achievements"""
     achievements = user_service.get_achievements(user_id)
     return {"achievements": achievements}
+
+# Drink History Endpoints
+@app.get("/user/{user_id}/drinks")
+async def get_drink_history(user_id: str = "default", limit: int = None):
+    """Get user's drink history"""
+    drinks = drink_history_service.get_user_drinks(user_id, limit)
+    return {"drinks": drinks}
+
+@app.get("/user/{user_id}/drinks/today")
+async def get_today_drinks(user_id: str = "default"):
+    """Get today's drinks"""
+    drinks = drink_history_service.get_today_drinks(user_id)
+    totals = drink_history_service.get_daily_totals(user_id)
+    return {
+        "drinks": drinks,
+        "totals": totals
+    }
+
+@app.get("/user/{user_id}/drinks/weekly-stats")
+async def get_weekly_stats(user_id: str = "default"):
+    """Get weekly drinking statistics"""
+    stats = drink_history_service.get_weekly_stats(user_id)
+    return {"weekly_stats": stats}
+
+@app.get("/user/{user_id}/health-insights")
+async def get_health_insights(user_id: str = "default"):
+    """Get personalized health insights"""
+    insights = drink_history_service.get_health_insights(user_id)
+    return {"insights": insights}
+
+@app.delete("/user/{user_id}/drinks/{drink_id}")
+async def delete_drink(user_id: str, drink_id: str):
+    """Delete a specific drink"""
+    success = drink_history_service.delete_drink(user_id, drink_id)
+    if success:
+        return {"message": "Drink deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Drink not found")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

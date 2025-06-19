@@ -4,59 +4,59 @@
     "notifications": {
       "daily_reminders": false,
       "goal_achievements": true,
-      "health_tips": false,
+      "health_tips": true,
       "weekly_reports": true,
       "reminder_time": "09:00"
     },
     "health_preferences": {
-      "age": null,
-      "weight": null,
+      "age": 30,
+      "weight": 70.0,
       "height": null,
-      "activity_level": "moderate",
+      "activity_level": "active",
       "dietary_restrictions": null,
       "health_goals": null,
       "target_calories": null,
       "target_water_ml": null
     },
     "privacy_settings": {
-      "data_collection": true,
+      "data_collection": false,
       "analytics_tracking": false,
       "personalized_ads": false,
       "share_with_partners": false
     },
     "daily_goals": [
       {
-        "id": "30272029-33a6-49c9-94e3-8c8469e1295f",
+        "id": "c9ca0966-c3f9-4099-a1c3-87fab27e4751",
         "name": "Daily Calories",
         "target": 2000.0,
-        "current": 4.0,
+        "current": 114.0,
         "unit": "kcal",
         "type": "calories",
-        "created_at": "2025-06-19 14:33:32.505506",
+        "created_at": "2025-06-19 14:42:31.143983",
         "is_achieved": false
       },
       {
-        "id": "8997392a-cdc9-4879-be96-27c2fd3277ab",
+        "id": "ef721d53-444c-41d2-b6c0-3f57158e9dd9",
         "name": "Daily Water",
         "target": 2000.0,
-        "current": 480.0,
+        "current": 240.0,
         "unit": "ml",
         "type": "water",
-        "created_at": "2025-06-19 14:33:32.505506",
+        "created_at": "2025-06-19 14:42:31.143983",
         "is_achieved": false
       },
       {
-        "id": "8ca35950-3939-4048-b8b8-5b5586bf5e4f",
+        "id": "38030e48-9483-44d7-a4bf-a980c8a1ccf8",
         "name": "Sugar Limit",
         "target": 50.0,
-        "current": 0.0,
+        "current": 24.0,
         "unit": "g",
         "type": "sugar",
-        "created_at": "2025-06-19 14:33:32.505506",
+        "created_at": "2025-06-19 14:42:31.143983",
         "is_achieved": false
       }
     ],
-    "created_at": "2025-06-19 14:33:32.505506",
-    "updated_at": "2025-06-19 14:41:49.696140"
+    "created_at": "2025-06-19 14:42:31.143983",
+    "updated_at": "2025-06-19 14:42:31.244538"
   }
 }

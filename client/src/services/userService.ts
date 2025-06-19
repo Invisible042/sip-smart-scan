@@ -241,4 +241,79 @@ export class UserService {
       achievement_rate: 0
     };
   }
+
+  // Drink History
+  static async getDrinkHistory(limit?: number) {
+    try {
+      const url = limit ? `${API_BASE_URL}/user/${this.userId}/drinks?limit=${limit}` : `${API_BASE_URL}/user/${this.userId}/drinks`;
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        return data.drinks;
+      }
+    } catch (error) {
+      console.warn('Backend not available for drink history');
+    }
+    
+    // Fallback to localStorage
+    const stored = localStorage.getItem('drinkHistory');
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  static async getTodayDrinks() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${this.userId}/drinks/today`);
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.warn('Backend not available for today drinks');
+    }
+    
+    // Fallback to localStorage with date filtering
+    const stored = localStorage.getItem('drinkHistory');
+    if (stored) {
+      const drinks = JSON.parse(stored);
+      const today = new Date().toDateString();
+      return {
+        drinks: drinks.filter((drink: any) => new Date(drink.timestamp).toDateString() === today),
+        totals: { calories: 0, sugar_g: 0, caffeine_mg: 0, water_ml: 0, drink_count: 0 }
+      };
+    }
+    
+    return { drinks: [], totals: { calories: 0, sugar_g: 0, caffeine_mg: 0, water_ml: 0, drink_count: 0 } };
+  }
+
+  static async getWeeklyStats() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${this.userId}/drinks/weekly-stats`);
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.warn('Backend not available for weekly stats');
+    }
+    
+    return {
+      weekly_stats: {
+        total_drinks: 0,
+        total_calories: 0,
+        avg_drinks_per_day: 0,
+        most_consumed_drink: 'None'
+      }
+    };
+  }
+
+  static async getHealthInsights() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/${this.userId}/health-insights`);
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.warn('Backend not available for health insights');
+    }
+    
+    return { insights: ['Keep tracking your drinks for personalized insights!'] };
+  }
 }

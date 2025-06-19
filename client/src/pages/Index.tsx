@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Settings, History, Home, BarChart3 } from "lucide-react";
 import { useDrink } from "@/contexts/DrinkContext";
@@ -13,10 +13,39 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("Today");
   const navigate = useNavigate();
 
-  const todayCalories = LocalDatabase.getTodayCalories();
-  const todaySugar = LocalDatabase.getTodaySugar();
-  const todayCaffeine = LocalDatabase.getTodayCaffeine();
+  const [todayStats, setTodayStats] = useState({
+    calories: 0,
+    sugar: 0,
+    caffeine: 0,
+    drinkCount: 0
+  });
+  
   const todayDrinks = getTodayDrinks();
+
+  useEffect(() => {
+    loadTodayStats();
+  }, []);
+
+  const loadTodayStats = async () => {
+    try {
+      const { UserService } = await import("@/services/userService");
+      const todayData = await UserService.getTodayDrinks();
+      setTodayStats({
+        calories: todayData.totals.calories,
+        sugar: todayData.totals.sugar_g,
+        caffeine: todayData.totals.caffeine_mg,
+        drinkCount: todayData.totals.drink_count
+      });
+    } catch (error) {
+      // Fallback to local database
+      setTodayStats({
+        calories: LocalDatabase.getTodayCalories(),
+        sugar: LocalDatabase.getTodaySugar(),
+        caffeine: LocalDatabase.getTodayCaffeine(),
+        drinkCount: todayDrinks.length
+      });
+    }
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { 
@@ -95,7 +124,7 @@ const Index = () => {
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/10 rounded-full"></div>
             <div className="flex justify-between items-center mb-4 relative z-10">
               <div>
-                <div className="text-5xl font-extrabold leading-none">{todayCalories}</div>
+                <div className="text-5xl font-extrabold leading-none">{todayStats.calories}</div>
                 <div className="text-white/90 mt-1">Calories consumed</div>
               </div>
               <div className="w-20 h-20 relative">
@@ -117,7 +146,7 @@ const Index = () => {
                     fill="none"
                     strokeLinecap="round"
                     strokeDasharray="188"
-                    strokeDashoffset={188 - (todayCalories / 2000) * 188}
+                    strokeDashoffset={188 - (todayStats.calories / 2000) * 188}
                     className="transition-all duration-500"
                   />
                 </svg>
@@ -129,7 +158,7 @@ const Index = () => {
           {/* Nutrition Grid */}
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/10 backdrop-blur-sm">
-              <div className="text-2xl font-bold text-white mb-1">{todaySugar}g</div>
+              <div className="text-2xl font-bold text-white mb-1">{todayStats.sugar}g</div>
               <div className="text-slate-400 text-sm mb-3">Sugar</div>
               <div className="w-10 h-10 mx-auto relative">
                 <svg className="w-full h-full transform -rotate-90">
@@ -142,13 +171,13 @@ const Index = () => {
                     strokeWidth="4"
                     fill="none"
                     strokeDasharray="94"
-                    strokeDashoffset={94 - (todaySugar / 50) * 94}
+                    strokeDashoffset={94 - (todayStats.sugar / 50) * 94}
                   />
                 </svg>
               </div>
             </div>
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/10 backdrop-blur-sm">
-              <div className="text-2xl font-bold text-white mb-1">{todayCaffeine}mg</div>
+              <div className="text-2xl font-bold text-white mb-1">{todayStats.caffeine}mg</div>
               <div className="text-slate-400 text-sm mb-3">Caffeine</div>
               <div className="w-10 h-10 mx-auto relative">
                 <svg className="w-full h-full transform -rotate-90">
@@ -161,7 +190,7 @@ const Index = () => {
                     strokeWidth="4"
                     fill="none"
                     strokeDasharray="94"
-                    strokeDashoffset={94 - (todayCaffeine / 400) * 94}
+                    strokeDashoffset={94 - (todayStats.caffeine / 400) * 94}
                   />
                 </svg>
               </div>

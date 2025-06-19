@@ -50,17 +50,11 @@ export const analyzeDrink = async (imageFile: File): Promise<DrinkData> => {
       imageUrl: URL.createObjectURL(imageFile)
     };
     
-    // Save to local database
+    // Save to local database for offline access
     await LocalDatabase.saveDrink(drinkData);
     
-    // Update daily goals in backend
-    try {
-      await fetch(`${API_BASE_URL}/user/default/daily-goals`, {
-        method: 'GET',
-      });
-    } catch (error) {
-      console.warn('Could not sync with backend goals:', error);
-    }
+    // Backend automatically updated goals and saved drink history
+    console.log('✅ Drink analyzed, saved to backend, and goals updated');
     
     console.log('Drink analyzed and saved:', drinkData.name);
     return drinkData;
