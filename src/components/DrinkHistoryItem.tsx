@@ -8,8 +8,8 @@ interface DrinkHistoryItemProps {
 
 export const DrinkHistoryItem = ({ drink, date }: DrinkHistoryItemProps) => {
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm flex items-center space-x-4">
-      <div className="w-16 h-16 bg-gray-soft rounded-xl flex items-center justify-center flex-shrink-0">
+    <div className="bg-white/5 rounded-2xl p-4 flex items-center space-x-4 border border-white/10 backdrop-blur-sm">
+      <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-yellow-400 rounded-xl flex items-center justify-center flex-shrink-0">
         {drink.image ? (
           <img
             src={drink.image}
@@ -23,10 +23,10 @@ export const DrinkHistoryItem = ({ drink, date }: DrinkHistoryItemProps) => {
       
       <div className="flex-1">
         <div className="flex justify-between items-start mb-1">
-          <h3 className="font-semibold text-gray-900">{drink.name}</h3>
-          {date && <span className="text-gray-500 text-sm">{date}</span>}
+          <h3 className="font-semibold text-white">{drink.name}</h3>
+          {date && <span className="text-slate-400 text-sm">{date}</span>}
         </div>
-        <div className="flex space-x-4 text-sm text-gray-600">
+        <div className="flex space-x-4 text-sm text-slate-400">
           <span>{drink.calories} kcal</span>
           <span>{drink.sugar}g sugar</span>
         </div>
