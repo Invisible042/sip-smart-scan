@@ -1,6 +1,7 @@
 # SnapDrink AI - Comprehensive Documentation
 
 ## Table of Contents
+
 1. [Architecture Overview](#architecture-overview)
 2. [Data Flow Diagrams](#data-flow-diagrams)
 3. [Backend API Documentation](#backend-api-documentation)
@@ -136,7 +137,7 @@ USER ACTION: Update Settings
     │   ├─▶ [Backend: PUT /user/{id}/notifications]
     │   └─▶ [AsyncStorage fallback]
     │
-    ├─▶ Health Preferences  
+    ├─▶ Health Preferences
     │   ├─▶ [Backend: PUT /user/{id}/health-preferences]
     │   ├─▶ BMR calculation (if weight/height/age provided)
     │   └─▶ [AsyncStorage fallback]
@@ -239,6 +240,7 @@ USER ACTION: View History
 ### Core Endpoints
 
 #### Image Analysis
+
 ```
 POST /upload
 Content-Type: multipart/form-data
@@ -264,11 +266,12 @@ Response:
 ```
 
 #### User Management
+
 ```
 GET /user/{user_id}/profile
 Response: Complete user profile with goals, settings, statistics
 
-GET /user/{user_id}/stats  
+GET /user/{user_id}/stats
 Response: User statistics and achievement data
 
 GET /user/{user_id}/daily-goals
@@ -280,13 +283,15 @@ Response: Updated goal object
 ```
 
 #### Settings Management
+
 ```
 GET/PUT /user/{user_id}/notifications
-GET/PUT /user/{user_id}/health-preferences  
+GET/PUT /user/{user_id}/health-preferences
 GET/PUT /user/{user_id}/privacy
 ```
 
 #### Analytics & History
+
 ```
 GET /user/{user_id}/drinks
 Response: Complete drink history
@@ -306,49 +311,58 @@ Response: Personalized health recommendations
 ### Screen Components
 
 #### HomeScreen.tsx
+
 **Purpose**: Main dashboard with real-time stats and camera integration
 
 **State Management**:
+
 ```typescript
 const [todayStats, setTodayStats] = useState({
   calories: 0,
-  sugar: 0, 
+  sugar: 0,
   caffeine: 0,
   water: 0,
-  drinkCount: 0
+  drinkCount: 0,
 });
 const [goals, setGoals] = useState<DailyGoal[]>([]);
 const [refreshing, setRefreshing] = useState(false);
 ```
 
 **Key Functions**:
+
 - `loadData()`: Fetches today's stats and goals
 - `showImagePicker()`: Handles camera/gallery selection
 - `handleImageResponse()`: Processes captured image
 - `onRefresh()`: Pull-to-refresh functionality
 
 **Data Flow**:
+
 1. Mount → loadData() → Service calls → State updates → UI render
 2. Camera button → Image picker → Analysis service → Alert + refresh
 3. Pull-to-refresh → loadData() → Updated state → UI refresh
 
 #### HistoryScreen.tsx
+
 **Purpose**: Displays chronological drink history with details
 
 **State Management**:
+
 ```typescript
 const [drinks, setDrinks] = useState<DrinkData[]>([]);
 const [refreshing, setRefreshing] = useState(false);
 ```
 
 **Data Flow**:
+
 1. Mount → loadDrinks() → AsyncStorage → Parse drinks → Sort by date → Render
 2. Pull-to-refresh → loadDrinks() → Updated state → UI refresh
 
-#### SettingsScreen.tsx  
+#### SettingsScreen.tsx
+
 **Purpose**: User preferences and app configuration
 
 **Data Flow**:
+
 1. Settings item tap → Alert dialog (placeholder)
 2. Future: Navigation to specific setting screens
 3. Setting changes → UserService → Backend/AsyncStorage → Confirmation
@@ -356,9 +370,11 @@ const [refreshing, setRefreshing] = useState(false);
 ### Reusable Components
 
 #### DrinkItem Component
+
 **Purpose**: Individual drink display card in history
 
 **Props**:
+
 ```typescript
 interface DrinkItemProps {
   drink: DrinkData;
@@ -366,15 +382,18 @@ interface DrinkItemProps {
 ```
 
 **Renders**:
+
 - Drink name and timestamp
 - Calorie badge
 - Nutrition grid (sugar, caffeine, water)
 - Health tip with icon
 
 #### StatCard Component (Planned)
+
 **Purpose**: Reusable stat display with progress
 
 **Props**:
+
 ```typescript
 interface StatsCardProps {
   title: string;
@@ -390,65 +409,69 @@ interface StatsCardProps {
 ### Core Data Structures
 
 #### DrinkData
+
 ```typescript
 export interface DrinkData {
-  id: string;                    // Unique identifier
-  name: string;                  // Drink name from AI analysis
-  calories: number;              // Caloric content
-  sugar: number;                 // Sugar content in grams
-  caffeine?: number;             // Caffeine content in mg (optional)
-  water?: number;                // Water content in ml (optional)
-  image?: string;                // Local image URI (optional)
-  timestamp: string;             // ISO timestamp of consumption
-  healthTip?: string;            // AI-generated health advice (optional)
+  id: string; // Unique identifier
+  name: string; // Drink name from AI analysis
+  calories: number; // Caloric content
+  sugar: number; // Sugar content in grams
+  caffeine?: number; // Caffeine content in mg (optional)
+  water?: number; // Water content in ml (optional)
+  image?: string; // Local image URI (optional)
+  timestamp: string; // ISO timestamp of consumption
+  healthTip?: string; // AI-generated health advice (optional)
 }
 ```
 
 #### DailyGoal
+
 ```typescript
 export interface DailyGoal {
-  id: string;                    // Unique identifier
-  name: string;                  // Goal display name
-  target: number;                // Target value to achieve
-  current: number;               // Current progress value
-  unit: string;                  // Unit of measurement (kcal, g, mg, ml)
+  id: string; // Unique identifier
+  name: string; // Goal display name
+  target: number; // Target value to achieve
+  current: number; // Current progress value
+  unit: string; // Unit of measurement (kcal, g, mg, ml)
   type: 'calories' | 'drinks' | 'sugar' | 'caffeine' | 'water';
-  is_achieved?: boolean;         // Achievement status (optional)
+  is_achieved?: boolean; // Achievement status (optional)
 }
 ```
 
 #### User Settings
+
 ```typescript
 export interface NotificationSettings {
-  daily_reminders: boolean;      // Daily drinking reminders
-  goal_achievements: boolean;    // Goal completion notifications
-  health_tips: boolean;          // Health advice notifications
-  weekly_reports: boolean;       // Weekly summary reports
-  reminder_time: string;         // Reminder time in HH:MM format
+  daily_reminders: boolean; // Daily drinking reminders
+  goal_achievements: boolean; // Goal completion notifications
+  health_tips: boolean; // Health advice notifications
+  weekly_reports: boolean; // Weekly summary reports
+  reminder_time: string; // Reminder time in HH:MM format
 }
 
 export interface HealthPreferences {
-  age?: number;                  // User age for BMR calculation
-  weight?: number;               // Weight in kg
-  height?: number;               // Height in cm
-  activity_level: string;        // Activity level for calorie calculation
-  dietary_restrictions?: string;  // Special dietary needs
-  health_goals?: string;         // Personal health objectives
-  target_calories?: number;      // Daily calorie target (calculated)
-  target_water_ml?: number;      // Daily water target
+  age?: number; // User age for BMR calculation
+  weight?: number; // Weight in kg
+  height?: number; // Height in cm
+  activity_level: string; // Activity level for calorie calculation
+  dietary_restrictions?: string; // Special dietary needs
+  health_goals?: string; // Personal health objectives
+  target_calories?: number; // Daily calorie target (calculated)
+  target_water_ml?: number; // Daily water target
 }
 
 export interface PrivacySettings {
-  data_collection: boolean;      // Allow app data collection
-  analytics_tracking: boolean;   // Enable usage analytics
-  personalized_ads: boolean;     // Show personalized advertisements
-  share_with_partners: boolean;  // Share data with third parties
+  data_collection: boolean; // Allow app data collection
+  analytics_tracking: boolean; // Enable usage analytics
+  personalized_ads: boolean; // Show personalized advertisements
+  share_with_partners: boolean; // Share data with third parties
 }
 ```
 
 ### Backend Models
 
 #### Backend Response Format
+
 ```typescript
 interface BackendResponse {
   drink_name: string;
@@ -477,19 +500,20 @@ interface BackendResponse {
 ```typescript
 class DrinkAnalysisService {
   // Main analysis function
-  static async analyzeDrink(imageUri: string): Promise<DrinkData>
-  
+  static async analyzeDrink(imageUri: string): Promise<DrinkData>;
+
   // Local storage management
-  private static async saveDrinkLocally(drink: DrinkData): Promise<void>
-  static async getDrinksFromStorage(): Promise<DrinkData[]>
-  
+  private static async saveDrinkLocally(drink: DrinkData): Promise<void>;
+  static async getDrinksFromStorage(): Promise<DrinkData[]>;
+
   // Statistics calculation
-  static async getTodayDrinks(): Promise<DrinkData[]>
-  static async getTodayStats(): Promise<TodayStats>
+  static async getTodayDrinks(): Promise<DrinkData[]>;
+  static async getTodayStats(): Promise<TodayStats>;
 }
 ```
 
 **Data Transformation**:
+
 1. Image URI → FormData → Backend request
 2. Backend response → DrinkData conversion
 3. DrinkData → AsyncStorage serialization
@@ -504,16 +528,19 @@ class DrinkAnalysisService {
 ```typescript
 class UserService {
   // Settings management
-  static async getNotifications(): Promise<NotificationSettings>
-  static async updateNotifications(settings: Partial<NotificationSettings>): Promise<void>
-  
-  // Goal management  
-  static async getDailyGoals(): Promise<DailyGoal[]>
-  static async getTodayDrinks(): Promise<TodayDrinksResponse>
+  static async getNotifications(): Promise<NotificationSettings>;
+  static async updateNotifications(
+    settings: Partial<NotificationSettings>
+  ): Promise<void>;
+
+  // Goal management
+  static async getDailyGoals(): Promise<DailyGoal[]>;
+  static async getTodayDrinks(): Promise<TodayDrinksResponse>;
 }
 ```
 
 **Fallback Strategy**:
+
 1. Try backend API call
 2. On failure, use AsyncStorage
 3. Merge backend and local data when available
@@ -546,12 +573,14 @@ const onRefresh = async () => {
 
 ### Data Synchronization
 
-**Immediate Updates**: 
+**Immediate Updates**:
+
 - UI updates immediately after user actions
 - Background sync with backend
 - AsyncStorage backup for offline access
 
 **Refresh Patterns**:
+
 - Pull-to-refresh on all screens
 - Automatic refresh after data changes
 - Screen focus refresh (when returning to screen)
@@ -561,14 +590,16 @@ const onRefresh = async () => {
 ### AsyncStorage (Client-Side)
 
 **Keys Used**:
+
 ```
 'drinks'              → DrinkData[]
-'notifications'       → NotificationSettings  
+'notifications'       → NotificationSettings
 'healthPreferences'   → HealthPreferences
 'privacySettings'     → PrivacySettings
 ```
 
 **Data Format**:
+
 - JSON serialization for complex objects
 - ISO string format for dates
 - Automatic parsing/stringification
@@ -576,6 +607,7 @@ const onRefresh = async () => {
 ### File Storage (Backend)
 
 **Structure**:
+
 ```
 backend/data/
 ├── users.json           → User profiles and settings
@@ -584,6 +616,7 @@ backend/data/
 ```
 
 **Persistence Strategy**:
+
 - Write-through caching (immediate file updates)
 - JSON format for human readability
 - Automatic backup on writes
@@ -611,7 +644,7 @@ static async getNotifications(): Promise<NotificationSettings> {
   } catch (error) {
     // Silent fallback to AsyncStorage
   }
-  
+
   const stored = await AsyncStorage.getItem('notifications');
   return stored ? JSON.parse(stored) : defaultSettings;
 }
@@ -631,14 +664,16 @@ static async getNotifications(): Promise<NotificationSettings> {
 **Principle**: Never show network errors to users
 
 **Implementation**:
+
 1. All service methods include try-catch blocks
-2. Fallback to AsyncStorage on API failures  
+2. Fallback to AsyncStorage on API failures
 3. Default data provided when no local data exists
 4. Silent logging for debugging
 
 ### Backend Error Handling
 
 **Graceful Degradation**:
+
 - External API failures → Local database fallback
 - Invalid requests → Validation errors with suggestions
 - System errors → Generic error responses
@@ -647,6 +682,7 @@ static async getNotifications(): Promise<NotificationSettings> {
 ### Data Consistency
 
 **Conflict Resolution**:
+
 1. Backend data is authoritative when available
 2. Local data preserved during network outages
 3. Merge strategies for conflicting data

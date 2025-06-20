@@ -1,17 +1,21 @@
 # SnapDrink AI API Reference
 
 ## Base URL
+
 ```
 http://localhost:8000
 ```
 
 ## Authentication
+
 Currently uses default user ID (`default`). In production, implement proper authentication middleware.
 
 ## Response Format
+
 All API responses follow standard HTTP status codes with JSON payloads.
 
 ### Success Response (200)
+
 ```json
 {
   "status": "success",
@@ -21,6 +25,7 @@ All API responses follow standard HTTP status codes with JSON payloads.
 ```
 
 ### Error Response (4xx/5xx)
+
 ```json
 {
   "detail": "Error description",
@@ -31,11 +36,13 @@ All API responses follow standard HTTP status codes with JSON payloads.
 ## Core Endpoints
 
 ### Health Check
+
 ```http
 GET /health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -51,15 +58,18 @@ GET /health
 ### Image Analysis
 
 #### Upload and Analyze Drink
+
 ```http
 POST /upload
 Content-Type: multipart/form-data
 ```
 
 **Request Body:**
+
 - `file`: Image file (JPEG/PNG, max 10MB)
 
 **Response:**
+
 ```json
 {
   "drink_name": "Coca Cola Classic",
@@ -78,6 +88,7 @@ Content-Type: multipart/form-data
 ```
 
 **Error Cases:**
+
 - `400`: Invalid file format
 - `413`: File too large
 - `500`: Analysis failed
@@ -85,11 +96,13 @@ Content-Type: multipart/form-data
 ## User Management
 
 ### Get User Profile
+
 ```http
 GET /user/{user_id}/profile
 ```
 
 **Response:**
+
 ```json
 {
   "user_id": "default",
@@ -103,11 +116,13 @@ GET /user/{user_id}/profile
 ```
 
 ### Get User Statistics
+
 ```http
 GET /user/{user_id}/stats
 ```
 
 **Response:**
+
 ```json
 {
   "total_goals": 3,
@@ -125,11 +140,13 @@ GET /user/{user_id}/stats
 ### Notifications
 
 #### Get Notification Settings
+
 ```http
 GET /user/{user_id}/notifications
 ```
 
 **Response:**
+
 ```json
 {
   "daily_reminders": true,
@@ -141,12 +158,14 @@ GET /user/{user_id}/notifications
 ```
 
 #### Update Notification Settings
+
 ```http
 PUT /user/{user_id}/notifications
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "daily_reminders": false,
@@ -156,6 +175,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Notification settings updated",
@@ -166,11 +186,13 @@ Content-Type: application/json
 ### Health Preferences
 
 #### Get Health Preferences
+
 ```http
 GET /user/{user_id}/health-preferences
 ```
 
 **Response:**
+
 ```json
 {
   "age": 30,
@@ -185,12 +207,14 @@ GET /user/{user_id}/health-preferences
 ```
 
 #### Update Health Preferences
+
 ```http
 PUT /user/{user_id}/health-preferences
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "age": 31,
@@ -201,6 +225,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Health preferences updated",
@@ -209,17 +234,20 @@ Content-Type: application/json
 ```
 
 **Notes:**
+
 - BMR calculation triggered when age, weight, height provided
 - Target calories automatically calculated based on activity level
 
 ### Privacy Settings
 
 #### Get Privacy Settings
+
 ```http
 GET /user/{user_id}/privacy
 ```
 
 **Response:**
+
 ```json
 {
   "data_collection": true,
@@ -230,12 +258,14 @@ GET /user/{user_id}/privacy
 ```
 
 #### Update Privacy Settings
+
 ```http
 PUT /user/{user_id}/privacy
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "data_collection": false,
@@ -246,11 +276,13 @@ Content-Type: application/json
 ## Daily Goals
 
 ### Get Daily Goals
+
 ```http
 GET /user/{user_id}/daily-goals
 ```
 
 **Response:**
+
 ```json
 {
   "goals": [
@@ -265,7 +297,7 @@ GET /user/{user_id}/daily-goals
       "is_achieved": false
     },
     {
-      "id": "goal_2", 
+      "id": "goal_2",
       "name": "Daily Water",
       "target": 2000.0,
       "current": 750.0,
@@ -279,12 +311,14 @@ GET /user/{user_id}/daily-goals
 ```
 
 ### Create Daily Goal
+
 ```http
 POST /user/{user_id}/daily-goals
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "Caffeine Limit",
@@ -295,6 +329,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Daily goal created",
@@ -312,12 +347,14 @@ Content-Type: application/json
 ```
 
 ### Update Daily Goal
+
 ```http
 PUT /user/{user_id}/daily-goals/{goal_id}
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "target": 1800.0,
@@ -326,6 +363,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Daily goal updated",
@@ -336,15 +374,18 @@ Content-Type: application/json
 ## Drink History & Analytics
 
 ### Get Drink History
+
 ```http
 GET /user/{user_id}/drinks
 GET /user/{user_id}/drinks?limit=10
 ```
 
 **Query Parameters:**
+
 - `limit` (optional): Number of drinks to return
 
 **Response:**
+
 ```json
 {
   "drinks": [
@@ -367,11 +408,13 @@ GET /user/{user_id}/drinks?limit=10
 ```
 
 ### Get Today's Drinks
+
 ```http
 GET /user/{user_id}/drinks/today
 ```
 
 **Response:**
+
 ```json
 {
   "drinks": [ ... ],
@@ -387,11 +430,13 @@ GET /user/{user_id}/drinks/today
 ```
 
 ### Get Weekly Statistics
+
 ```http
 GET /user/{user_id}/drinks/weekly-stats
 ```
 
 **Response:**
+
 ```json
 {
   "weekly_stats": {
@@ -415,11 +460,13 @@ GET /user/{user_id}/drinks/weekly-stats
 ```
 
 ### Get Health Insights
+
 ```http
 GET /user/{user_id}/health-insights
 ```
 
 **Response:**
+
 ```json
 {
   "insights": [
@@ -431,11 +478,13 @@ GET /user/{user_id}/health-insights
 ```
 
 ### Get User Achievements
+
 ```http
 GET /user/{user_id}/achievements
 ```
 
 **Response:**
+
 ```json
 {
   "achievements": [
@@ -451,11 +500,13 @@ GET /user/{user_id}/achievements
 ```
 
 ### Delete Drink
+
 ```http
 DELETE /user/{user_id}/drinks/{drink_id}
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Drink deleted successfully"
@@ -463,6 +514,7 @@ DELETE /user/{user_id}/drinks/{drink_id}
 ```
 
 **Error Response:**
+
 ```json
 {
   "detail": "Drink not found"
@@ -472,20 +524,23 @@ DELETE /user/{user_id}/drinks/{drink_id}
 ## Data Types Reference
 
 ### Goal Types
+
 - `calories`: Daily caloric intake
 - `drinks`: Number of drinks consumed
-- `sugar`: Sugar intake in grams  
+- `sugar`: Sugar intake in grams
 - `caffeine`: Caffeine intake in milligrams
 - `water`: Water intake in milliliters
 
 ### Activity Levels
+
 - `sedentary`: Little to no exercise
 - `light`: Light exercise 1-3 days/week
-- `moderate`: Moderate exercise 3-5 days/week  
+- `moderate`: Moderate exercise 3-5 days/week
 - `active`: Heavy exercise 6-7 days/week
 - `very_active`: Very heavy exercise, twice per day
 
 ### Nutrition Units
+
 - Calories: `kcal`
 - Sugar: `g` (grams)
 - Caffeine: `mg` (milligrams)
@@ -495,31 +550,37 @@ DELETE /user/{user_id}/drinks/{drink_id}
 - Protein: `g` (grams)
 
 ## Rate Limiting
+
 Currently no rate limiting implemented. Recommended for production:
+
 - 100 requests per minute per user
 - 10 image uploads per minute per user
 
 ## Error Codes
 
-| Code | Description |
-|------|-------------|
-| 200 | Success |
-| 400 | Bad Request - Invalid input |
-| 404 | Not Found - Resource doesn't exist |
-| 413 | Payload Too Large - File size exceeded |
-| 422 | Unprocessable Entity - Validation failed |
-| 500 | Internal Server Error - Server issue |
+| Code | Description                              |
+| ---- | ---------------------------------------- |
+| 200  | Success                                  |
+| 400  | Bad Request - Invalid input              |
+| 404  | Not Found - Resource doesn't exist       |
+| 413  | Payload Too Large - File size exceeded   |
+| 422  | Unprocessable Entity - Validation failed |
+| 500  | Internal Server Error - Server issue     |
 
 ## Webhook Support (Future)
+
 Planned webhook endpoints for real-time updates:
+
 - Goal achievements
 - Weekly reports
 - Health alerts
 
 ## SDKs and Libraries
+
 - Python: Use `requests` library
 - JavaScript: Use `fetch` API or `axios`
 - React Native: Built-in `fetch` support
 
 ## Support
+
 For API issues and feature requests, refer to the main documentation or backend logs.

@@ -1,28 +1,33 @@
 # Frontend Architecture Documentation
 
 ## Overview
+
 The SnapDrink AI mobile application is built using React Native with Expo, following modern mobile development patterns and best practices.
 
 ## Technology Stack
 
 ### Core Technologies
+
 - **React Native**: 0.72.6 (Cross-platform mobile framework)
 - **Expo**: ~49.0.0 (Development platform and tooling)
 - **TypeScript**: Full type safety and developer experience
 - **React Navigation**: Bottom tab navigation pattern
 
 ### UI & Styling
+
 - **React Native Built-in Components**: View, Text, ScrollView, etc.
 - **Expo Vector Icons**: Ionicons for consistent iconography
 - **Expo Linear Gradient**: Modern gradient backgrounds
 - **StyleSheet API**: Platform-optimized styling
 
 ### Storage & State
+
 - **AsyncStorage**: Client-side data persistence
 - **React Hooks**: Local state management (useState, useEffect)
 - **Context API**: Prepared for global state (if needed)
 
 ### Device Integration
+
 - **Expo Image Picker**: Camera and photo library access
 - **Expo Camera**: Direct camera integration
 - **SafeAreaView**: Handle device-specific screen areas
@@ -65,6 +70,7 @@ The SnapDrink AI mobile application is built using React Native with Expo, follo
 ```
 
 **Navigation Configuration:**
+
 - Bottom tab navigation for primary sections
 - Dark theme with teal accent colors
 - Ionicons for tab icons
@@ -77,6 +83,7 @@ The SnapDrink AI mobile application is built using React Native with Expo, follo
 **Purpose**: Main dashboard with real-time statistics and camera integration
 
 **Component Structure**:
+
 ```typescript
 export const HomeScreen: React.FC = () => {
   // State management
@@ -99,7 +106,7 @@ export const HomeScreen: React.FC = () => {
       <ScrollView refreshControl={refreshControl}>
         {/* Header */}
         {/* Main Calories Card */}
-        {/* Stats Grid */}  
+        {/* Stats Grid */}
         {/* Today's Goals */}
       </ScrollView>
       {/* Floating Action Button */}
@@ -109,6 +116,7 @@ export const HomeScreen: React.FC = () => {
 ```
 
 **UI Components**:
+
 1. **Header**: App title with profile button
 2. **Main Calories Card**: Large calorie display with progress indicator
 3. **Stats Grid**: 2x2 grid of nutrition stats (sugar, caffeine, water, drinks)
@@ -116,6 +124,7 @@ export const HomeScreen: React.FC = () => {
 5. **Floating Action Button**: Camera trigger with gradient background
 
 **State Flow**:
+
 ```
 Mount → loadData() → Service calls → State updates → UI render
 User action → Image picker → Analysis → Alert → loadData() → UI refresh
@@ -127,6 +136,7 @@ Pull-to-refresh → loadData() → State updates → UI refresh
 **Purpose**: Chronological display of drink history with detailed information
 
 **Component Structure**:
+
 ```typescript
 export const HistoryScreen: React.FC = () => {
   // State management
@@ -152,6 +162,7 @@ export const HistoryScreen: React.FC = () => {
 ```
 
 **Nested Components**:
+
 ```typescript
 // DrinkItem - Individual drink display
 const DrinkItem: React.FC<DrinkItemProps> = ({ drink }) => {
@@ -166,6 +177,7 @@ const DrinkItem: React.FC<DrinkItemProps> = ({ drink }) => {
 ```
 
 **Data Flow**:
+
 ```
 Mount → loadDrinks() → AsyncStorage → Parse/sort → State update → Render
 Pull-to-refresh → loadDrinks() → Updated state → Re-render
@@ -176,6 +188,7 @@ Pull-to-refresh → loadDrinks() → Updated state → Re-render
 **Purpose**: User preferences and app configuration management
 
 **Component Structure**:
+
 ```typescript
 export const SettingsScreen: React.FC = () => {
   // Event handlers
@@ -244,6 +257,7 @@ class DrinkAnalysisService {
 ```
 
 **Error Handling Strategy**:
+
 ```typescript
 try {
   // Backend API call
@@ -268,33 +282,44 @@ class UserService {
   static async getNotifications(): Promise<NotificationSettings> {
     try {
       // Try backend API first
-      const response = await fetch(`${API_BASE_URL}/user/${userId}/notifications`);
+      const response = await fetch(
+        `${API_BASE_URL}/user/${userId}/notifications`
+      );
       if (response.ok) return await response.json();
     } catch (error) {
       // Silent fallback to AsyncStorage
     }
-    
+
     // Local fallback with default values
     const stored = await AsyncStorage.getItem('notifications');
     return stored ? JSON.parse(stored) : defaultNotificationSettings;
   }
 
-  static async updateNotifications(settings: Partial<NotificationSettings>): Promise<void> {
+  static async updateNotifications(
+    settings: Partial<NotificationSettings>
+  ): Promise<void> {
     try {
       // Try backend update
-      await fetch(backendUrl, { method: 'PUT', body: JSON.stringify(settings) });
+      await fetch(backendUrl, {
+        method: 'PUT',
+        body: JSON.stringify(settings),
+      });
     } catch (error) {
       // Silent fallback
     }
-    
+
     // Always update local storage
     const current = await this.getNotifications();
-    await AsyncStorage.setItem('notifications', JSON.stringify({ ...current, ...settings }));
+    await AsyncStorage.setItem(
+      'notifications',
+      JSON.stringify({ ...current, ...settings })
+    );
   }
 }
 ```
 
 **Fallback Strategy**:
+
 1. Attempt backend API call
 2. On failure, use AsyncStorage
 3. Provide sensible defaults if no local data
@@ -306,6 +331,7 @@ class UserService {
 ### Local State with Hooks
 
 **Standard Pattern**:
+
 ```typescript
 const ScreenComponent: React.FC = () => {
   // State declarations
@@ -342,6 +368,7 @@ const ScreenComponent: React.FC = () => {
 ### Refresh Control Pattern
 
 **Implementation**:
+
 ```typescript
 const [refreshing, setRefreshing] = useState(false);
 
@@ -352,7 +379,7 @@ const onRefresh = async () => {
 };
 
 // In render:
-<ScrollView 
+<ScrollView
   refreshControl={
     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
   }
@@ -376,7 +403,7 @@ User Action → Event Handler → Service Call → Backend API → Response Proc
 const showImagePicker = () => {
   Alert.alert('Add Drink', 'Choose option', [
     { text: 'Camera', onPress: openCamera },
-    { text: 'Library', onPress: openLibrary }
+    { text: 'Library', onPress: openLibrary },
   ]);
 };
 
@@ -393,9 +420,10 @@ const handleImageResponse = async (imageUri: string) => {
   try {
     // Service call with backend integration
     const drinkData = await DrinkAnalysisService.analyzeDrink(imageUri);
-    
+
     // Show results to user
-    Alert.alert('Drink Analyzed!', 
+    Alert.alert(
+      'Drink Analyzed!',
       `${drinkData.name}\n${drinkData.calories} calories\n\n${drinkData.healthTip}`,
       [{ text: 'OK', onPress: () => loadData() }]
     );
@@ -418,21 +446,23 @@ const loadData = async () => {
 ### Design System
 
 **Color Palette**:
+
 ```typescript
 const colors = {
-  primary: '#0f172a',      // Dark background
-  secondary: '#1e293b',    // Card backgrounds
-  accent: '#10b981',       // Success/action color
-  error: '#ef4444',        // Error states
-  warning: '#f59e0b',      // Warning states
-  info: '#3b82f6',         // Info states
-  text: '#ffffff',         // Primary text
+  primary: '#0f172a', // Dark background
+  secondary: '#1e293b', // Card backgrounds
+  accent: '#10b981', // Success/action color
+  error: '#ef4444', // Error states
+  warning: '#f59e0b', // Warning states
+  info: '#3b82f6', // Info states
+  text: '#ffffff', // Primary text
   textSecondary: 'rgba(255,255,255,0.6)', // Secondary text
   border: 'rgba(255,255,255,0.1)', // Borders
 };
 ```
 
 **Typography Scale**:
+
 ```typescript
 const typography = {
   largeTitle: { fontSize: 28, fontWeight: 'bold' },
@@ -445,6 +475,7 @@ const typography = {
 ```
 
 **Spacing System**:
+
 ```typescript
 const spacing = {
   xs: 4,
@@ -459,6 +490,7 @@ const spacing = {
 ### Component Patterns
 
 **Card Pattern**:
+
 ```typescript
 const CardComponent = ({ children, style, ...props }) => (
   <View style={[styles.baseCard, style]} {...props}>
@@ -479,6 +511,7 @@ const styles = StyleSheet.create({
 ```
 
 **Gradient Pattern**:
+
 ```typescript
 const GradientCard = ({ colors, children, ...props }) => (
   <LinearGradient colors={colors} style={styles.gradientContainer} {...props}>
@@ -488,6 +521,7 @@ const GradientCard = ({ colors, children, ...props }) => (
 ```
 
 **Icon Button Pattern**:
+
 ```typescript
 const IconButton = ({ name, onPress, size = 24, color = 'white' }) => (
   <TouchableOpacity style={styles.iconButton} onPress={onPress}>
@@ -499,22 +533,26 @@ const IconButton = ({ name, onPress, size = 24, color = 'white' }) => (
 ## Performance Optimizations
 
 ### Image Handling
+
 - Image compression in ImagePicker (quality: 0.8)
 - Local URI storage for quick display
 - Lazy loading for history items
 
 ### Data Loading
+
 - Asynchronous data fetching
 - Local storage caching
 - Pull-to-refresh for manual updates
 - Optimistic UI updates
 
 ### Memory Management
+
 - Proper cleanup in useEffect
 - Avoid memory leaks in async operations
 - Efficient state updates
 
 ### Bundle Optimization
+
 - Expo managed workflow for optimized builds
 - Tree shaking for unused code elimination
 - Asset optimization through Expo
@@ -522,6 +560,7 @@ const IconButton = ({ name, onPress, size = 24, color = 'white' }) => (
 ## Testing Considerations
 
 ### Component Testing
+
 ```typescript
 // Example test structure (Jest + React Native Testing Library)
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
@@ -538,6 +577,7 @@ describe('HomeScreen', () => {
 ```
 
 ### Service Testing
+
 ```typescript
 // Mock AsyncStorage and fetch for service tests
 jest.mock('@react-native-async-storage/async-storage');
@@ -553,11 +593,13 @@ describe('DrinkAnalysisService', () => {
 ## Deployment Architecture
 
 ### Development
+
 - Expo Go app for instant testing
 - Hot reloading for rapid development
 - Metro bundler for fast builds
 
 ### Production
+
 - EAS Build for native app compilation
 - App Store Connect / Google Play Console distribution
 - Over-the-air updates via Expo Updates

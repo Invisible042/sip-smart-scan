@@ -38,7 +38,7 @@ const DrinkItem: React.FC<DrinkItemProps> = ({ drink }) => {
           <Text style={styles.calories}>{drink.calories} cal</Text>
         </View>
       </View>
-      
+
       <View style={styles.nutritionGrid}>
         <View style={styles.nutritionItem}>
           <Ionicons name="nutrition" size={16} color="#ef4444" />
@@ -52,14 +52,21 @@ const DrinkItem: React.FC<DrinkItemProps> = ({ drink }) => {
         </View>
         <View style={styles.nutritionItem}>
           <Ionicons name="water" size={16} color="#3b82f6" />
-          <Text style={styles.nutritionValue}>{Math.round((drink.water || 0) / 1000 * 10) / 10}L</Text>
+          <Text style={styles.nutritionValue}>
+            {Math.round(((drink.water || 0) / 1000) * 10) / 10}L
+          </Text>
           <Text style={styles.nutritionLabel}>Water</Text>
         </View>
       </View>
-      
+
       {drink.healthTip && (
         <View style={styles.healthTip}>
-          <Ionicons name="bulb" size={16} color="#10b981" style={{ marginRight: 8 }} />
+          <Ionicons
+            name="bulb"
+            size={16}
+            color="#10b981"
+            style={{ marginRight: 8 }}
+          />
           <Text style={styles.healthTipText}>{drink.healthTip}</Text>
         </View>
       )}
@@ -99,20 +106,24 @@ export const HistoryScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {drinks.length === 0 ? (
           <View style={styles.emptyState}>
-            <LinearGradient 
-              colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']} 
+            <LinearGradient
+              colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
               style={styles.emptyIcon}
             >
               <Ionicons name="list" size={48} color="rgba(255,255,255,0.5)" />
             </LinearGradient>
             <Text style={styles.emptyTitle}>No drinks scanned yet</Text>
-            <Text style={styles.emptySubtitle}>Start by scanning your first drink!</Text>
+            <Text style={styles.emptySubtitle}>
+              Start by scanning your first drink!
+            </Text>
           </View>
         ) : (
           drinks.map((drink, index) => (

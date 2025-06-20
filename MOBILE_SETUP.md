@@ -5,6 +5,7 @@ Your React web app has been converted to a React Native mobile application.
 ## What's Been Created
 
 ### Mobile App Structure
+
 ```
 ├── App.tsx                     # Main app with navigation
 ├── src/
@@ -20,6 +21,7 @@ Your React web app has been converted to a React Native mobile application.
 ```
 
 ### Key Mobile Features
+
 - **Native Camera Integration**: Take photos or select from gallery
 - **Touch-Optimized UI**: Designed for mobile interaction patterns
 - **Offline Storage**: AsyncStorage for data persistence
@@ -29,12 +31,15 @@ Your React web app has been converted to a React Native mobile application.
 ## Setup Instructions
 
 ### Option 1: Expo Development (Recommended)
+
 1. Install Expo CLI globally:
+
    ```bash
    npm install -g @expo/cli
    ```
 
 2. Install compatible dependencies:
+
    ```bash
    npm install expo@~49.0.0 react-native@0.72.6
    npm install @expo/vector-icons expo-image-picker expo-linear-gradient
@@ -43,6 +48,7 @@ Your React web app has been converted to a React Native mobile application.
    ```
 
 3. Start development server:
+
    ```bash
    npx expo start
    ```
@@ -52,6 +58,7 @@ Your React web app has been converted to a React Native mobile application.
    - Scan QR code to run the app
 
 ### Option 2: React Native CLI
+
 1. Follow React Native environment setup for your platform
 2. Initialize with compatible versions
 3. Install dependencies manually
@@ -62,6 +69,7 @@ Your React web app has been converted to a React Native mobile application.
 The mobile app connects to your existing Python FastAPI backend:
 
 1. Start backend server:
+
    ```bash
    cd backend
    python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
@@ -74,24 +82,28 @@ The mobile app connects to your existing Python FastAPI backend:
 ## Mobile App Features
 
 ### Home Screen
+
 - Real-time nutrition dashboard
 - Daily goal progress with visual indicators
 - Floating camera button for instant drink analysis
 - Pull-to-refresh for latest data
 
 ### Camera Integration
+
 - Native camera access for photo capture
 - Photo library selection
 - Instant backend analysis with AI
 - Nutrition breakdown and health tips
 
 ### History & Tracking
+
 - Visual drink history cards
 - Detailed nutrition information
 - Health tips for each drink
 - Chronological organization
 
 ### Settings & Preferences
+
 - User profile management
 - Goal configuration
 - Notification preferences

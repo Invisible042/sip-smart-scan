@@ -1,11 +1,13 @@
 # Backend Architecture Documentation
 
 ## Overview
+
 The SnapDrink AI backend is built using Python FastAPI, providing a robust, scalable API for mobile client integration with AI-powered drink analysis capabilities.
 
 ## Technology Stack
 
 ### Core Framework
+
 - **FastAPI**: Modern, fast web framework for building APIs
 - **Python 3.11+**: Latest Python version with performance improvements
 - **Uvicorn**: ASGI server for high-performance async handling
@@ -13,12 +15,14 @@ The SnapDrink AI backend is built using Python FastAPI, providing a robust, scal
 - **CORS Middleware**: Cross-origin resource sharing support
 
 ### External Integrations
+
 - **Google Cloud Vision API**: Image recognition and text detection
 - **Nutritionix API**: Comprehensive nutrition database
 - **OpenRouter API**: AI-powered health recommendations
 - **PIL (Pillow)**: Image processing and manipulation
 
 ### Data Storage
+
 - **File-based JSON Storage**: Simple, reliable data persistence
 - **In-memory Caching**: Fast data access and processing
 - **Structured Data Models**: Type-safe data management
@@ -52,6 +56,7 @@ backend/
 **Purpose**: HTTP request handling, routing, and response formatting
 
 **Key Components**:
+
 ```python
 # FastAPI application setup
 app = FastAPI(title="SnapDrink AI Backend", version="1.0.0")
@@ -74,6 +79,7 @@ drink_history_service = DrinkHistoryService()
 ```
 
 **Endpoint Categories**:
+
 - **Core Analysis**: `/upload` - Image analysis workflow
 - **User Management**: `/user/{id}/*` - Profile and settings
 - **Health & Analytics**: `/user/{id}/drinks/*` - History and insights
@@ -86,13 +92,14 @@ drink_history_service = DrinkHistoryService()
 **Purpose**: Image recognition and drink identification using Google Cloud Vision API
 
 **Architecture**:
+
 ```python
 class VisionService:
     def __init__(self):
         self.client = None  # Google Cloud Vision client
         self.fallback_drinks = ["Orange Juice", "Coffee", ...]  # Fallback options
         self._setup_client()
-    
+
     async def identify_drink(self, image_data: bytes) -> str:
         if self.client:
             return await self._identify_with_vision_api(image_data)
@@ -101,6 +108,7 @@ class VisionService:
 ```
 
 **Processing Flow**:
+
 1. **Image Input**: Receive raw image bytes
 2. **Vision API Call**: Text and label detection
 3. **Text Analysis**: Extract drink names from OCR results
@@ -109,6 +117,7 @@ class VisionService:
 6. **Fallback Logic**: Random selection if no detection
 
 **Fallback Strategy**:
+
 ```python
 def _fallback_prediction(self) -> str:
     """Mock prediction when Vision API unavailable"""
@@ -121,6 +130,7 @@ def _fallback_prediction(self) -> str:
 **Purpose**: Nutrition data retrieval with comprehensive database fallback
 
 **Architecture**:
+
 ```python
 class NutritionService:
     def __init__(self):
@@ -135,12 +145,14 @@ class NutritionService:
 ```
 
 **Data Flow**:
+
 1. **API Attempt**: Try Nutritionix API first
 2. **Local Lookup**: Search comprehensive local database
 3. **Fuzzy Matching**: Handle similar drink names
 4. **Default Values**: Sensible defaults for unknown drinks
 
 **Local Database Features**:
+
 - 15+ common drinks with complete nutrition profiles
 - Calories, sugar, caffeine, water, sodium, carbs, protein
 - Health insights and alternative suggestions
@@ -151,6 +163,7 @@ class NutritionService:
 **Purpose**: AI-powered health recommendations with intelligent fallbacks
 
 **Architecture**:
+
 ```python
 class HealthTipService:
     def __init__(self):
@@ -164,12 +177,14 @@ class HealthTipService:
 ```
 
 **Tip Generation Process**:
+
 1. **AI Analysis**: Use OpenRouter API for personalized tips
 2. **Categorization**: Classify drink based on nutrition profile
 3. **Fallback Selection**: Choose appropriate tips from local database
 4. **Personalization**: Context-aware recommendations
 
 **Categorization Logic**:
+
 ```python
 def _categorize_drink(self, nutrition_data: NutritionData) -> str:
     if nutrition_data.sugar_g > 20:
@@ -189,6 +204,7 @@ def _categorize_drink(self, nutrition_data: NutritionData) -> str:
 **Purpose**: User profile management, settings, and goal tracking
 
 **Architecture**:
+
 ```python
 class UserService:
     def __init__(self, data_dir: str = "data"):
@@ -198,6 +214,7 @@ class UserService:
 ```
 
 **Core Functions**:
+
 - **Profile Management**: Create/update user profiles
 - **Settings Persistence**: Notifications, health preferences, privacy
 - **Goal Tracking**: Daily goals with automatic progress updates
@@ -205,11 +222,12 @@ class UserService:
 - **Achievement Tracking**: Goal completion monitoring
 
 **Goal Update Mechanism**:
+
 ```python
 def update_goals_from_drink(self, user_id: str, nutrition_data: Dict):
     user = self.get_or_create_user(user_id)
     self._reset_daily_goals_if_new_day(user)  # Reset at midnight
-    
+
     for goal in user.daily_goals:
         if goal.type == GoalType.calories:
             goal.current += nutrition_data.get('calories', 0)
@@ -222,6 +240,7 @@ def update_goals_from_drink(self, user_id: str, nutrition_data: Dict):
 **Purpose**: Comprehensive drink tracking and analytics
 
 **Architecture**:
+
 ```python
 class DrinkHistoryService:
     def __init__(self, data_dir: str = "data"):
@@ -230,6 +249,7 @@ class DrinkHistoryService:
 ```
 
 **Analytics Features**:
+
 - **Complete History**: All drinks with timestamps and nutrition
 - **Daily Totals**: Real-time calculation of today's intake
 - **Weekly Statistics**: 7-day analytics and patterns
@@ -237,12 +257,13 @@ class DrinkHistoryService:
 - **Data Management**: Add, retrieve, delete operations
 
 **Weekly Analytics Example**:
+
 ```python
 def get_weekly_stats(self, user_id: str) -> Dict:
     end_date = date.today()
     start_date = end_date - timedelta(days=7)
     week_drinks = self.get_drinks_by_date_range(user_id, start_date, end_date)
-    
+
     return {
         "total_drinks": len(week_drinks),
         "total_calories": sum(drink.get('calories', 0) for drink in week_drinks),
@@ -295,6 +316,7 @@ class UserProfile(BaseModel):
 #### File-Based Storage Strategy
 
 **Advantages**:
+
 - Simple setup and maintenance
 - Human-readable JSON format
 - No database server required
@@ -302,16 +324,18 @@ class UserProfile(BaseModel):
 - Suitable for single-user application
 
 **Storage Structure**:
+
 ```
 data/
 ├── users.json          # User profiles, settings, goals
-├── drink_history.json  # Complete drink consumption history  
+├── drink_history.json  # Complete drink consumption history
 └── backups/           # Automatic backups (future)
     ├── users_backup_YYYYMMDD.json
     └── drinks_backup_YYYYMMDD.json
 ```
 
 **Data Persistence Pattern**:
+
 ```python
 def _save_data(self):
     """Thread-safe data persistence"""
@@ -329,23 +353,23 @@ async def analyze_drink(file: UploadFile = File(...)):
     # 1. Validate image file
     if not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="File must be an image")
-    
+
     # 2. Process image
     image_data = await file.read()
     image = Image.open(io.BytesIO(image_data))
     if image.mode != 'RGB':
         image = image.convert('RGB')
-    
+
     # 3. AI Analysis Pipeline
     drink_name = await vision_service.identify_drink(image_data)
     nutrition_data = await nutrition_service.get_nutrition_info(drink_name)
     health_tip = await health_tip_service.generate_health_tip(drink_name, nutrition_data)
-    
+
     # 4. Update User Data
     user_id = "default"  # Future: extract from authentication
     user_service.update_goals_from_drink(user_id, nutrition_data.dict())
     drink_history_service.add_drink(user_id, drink_name, nutrition_data, health_tip)
-    
+
     # 5. Return Structured Response
     return DrinkAnalysisResponse(
         drink_name=drink_name,
@@ -372,6 +396,7 @@ async def update_notifications(settings: UpdateNotificationSettings, user_id: st
 ### External API Failures
 
 **Google Cloud Vision API**:
+
 ```python
 try:
     result = self.client.text_detection(image=image)
@@ -382,6 +407,7 @@ except Exception as e:
 ```
 
 **Nutritionix API**:
+
 ```python
 try:
     response = requests.post(nutritionix_url, headers=headers, json=data)
@@ -397,12 +423,13 @@ return self._get_from_database(drink_name)
 ### Input Validation
 
 **FastAPI + Pydantic**:
+
 ```python
 # Automatic validation via Pydantic models
 class UpdateDailyGoal(BaseModel):
     target: Optional[float] = None
     current: Optional[float] = None
-    
+
     @validator('target')
     def target_must_be_positive(cls, v):
         if v is not None and v <= 0:
@@ -437,6 +464,7 @@ async def identify_drink(self, image_data: bytes) -> str:
 ### Caching Strategy
 
 **In-Memory Caching**:
+
 - User profiles cached after first load
 - Nutrition database loaded once at startup
 - Recent API responses cached temporarily
@@ -444,11 +472,13 @@ async def identify_drink(self, image_data: bytes) -> str:
 ### Request Optimization
 
 **Image Processing**:
+
 - Image compression and format conversion
 - Efficient memory handling for large images
 - Streaming file uploads
 
 **Database Operations**:
+
 - Lazy loading of user data
 - Efficient JSON parsing and serialization
 - Incremental data updates
@@ -458,6 +488,7 @@ async def identify_drink(self, image_data: bytes) -> str:
 ### Input Sanitization
 
 **Image Upload Security**:
+
 ```python
 # File type validation
 if not file.content_type.startswith('image/'):
@@ -472,6 +503,7 @@ if len(image_data) > MAX_FILE_SIZE:
 ### API Key Management
 
 **Environment Variables**:
+
 ```python
 # Secure API key handling
 self.nutritionix_app_id = os.getenv('NUTRITIONIX_APP_ID')
@@ -482,6 +514,7 @@ if not self.nutritionix_app_id:
 ### Data Privacy
 
 **User Data Protection**:
+
 - No sensitive data in logs
 - Secure file storage permissions
 - Optional data collection settings
@@ -531,12 +564,14 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ### Production Considerations
 
 **Server Configuration**:
+
 - Multiple worker processes
 - Production ASGI server (Gunicorn + Uvicorn)
 - Reverse proxy (Nginx)
 - SSL/TLS termination
 
 **Scaling Strategy**:
+
 - Horizontal scaling with load balancer
 - Database migration (PostgreSQL/MongoDB)
 - External file storage (AWS S3)
